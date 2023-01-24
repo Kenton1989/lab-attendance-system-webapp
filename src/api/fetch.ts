@@ -1,5 +1,4 @@
 import { StatusCodes } from "http-status-codes";
-import { resolvePath } from "react-router-dom";
 
 export class ApiError extends Error {
   response: Response;
@@ -49,6 +48,12 @@ function checkStatus(resp: Response) {
   throw new ApiError(resp);
 }
 
+/**
+ * Check if the body of response contain data.
+ *
+ * @param resp the response
+ * @returns true if the body is empty
+ */
 export async function bodyIsEmpty(resp: Response): Promise<boolean> {
   if (resp.status == StatusCodes.NO_CONTENT) {
     return true;
@@ -62,6 +67,21 @@ export async function bodyIsEmpty(resp: Response): Promise<boolean> {
     return true;
   }
   return false;
+}
+
+/**
+ * Get requestInit.headers and ensure it is a object of type Headers.
+ * If requestInit.headers is not Headers type, it will be set to a Headers object
+ * with the same header definitions.
+ *
+ * @param requestInit
+ * @returns the headers object
+ */
+export function getHeadersObj(requestInit: RequestInit): Headers {
+  if (!(requestInit.headers instanceof Headers)) {
+    requestInit.headers = new Headers(requestInit.headers);
+  }
+  return requestInit.headers;
 }
 
 /**
@@ -79,17 +99,11 @@ export async function bodyIsEmpty(resp: Response): Promise<boolean> {
 export async function jsonFetch(
   url: string,
   data?: any,
-  options?: RequestInit
+  options: RequestInit = {}
 ): Promise<any> {
-  let requestInit = options ?? {};
+  let requestInit = options;
 
-  let headers: Headers;
-  if (requestInit.headers instanceof Headers) {
-    headers = requestInit.headers;
-  } else {
-    headers = new Headers(requestInit.headers);
-  }
-  requestInit.headers = headers;
+  let headers = getHeadersObj(requestInit);
 
   if (data) {
     requestInit.body = JSON.stringify(data);
