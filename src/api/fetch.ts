@@ -35,10 +35,10 @@ export async function loadJson(
   }
 }
 
-function checkStatus(resp: Response) {
+async function checkStatus(resp: Response) {
   if (resp.ok) return;
 
-  let data = loadJson(resp, "HTTP request failed");
+  let data = await loadJson(resp, "HTTP request failed");
   console.error(data);
 
   if (resp.status >= 400 && resp.status < 500) {
@@ -112,9 +112,9 @@ export async function jsonFetch(
 
   headers.set("accept", "application/json");
 
-  let resp = await fetch(url);
+  let resp = await fetch(url, requestInit);
 
-  checkStatus(resp);
+  await checkStatus(resp);
 
   if (await bodyIsEmpty(resp)) {
     return;

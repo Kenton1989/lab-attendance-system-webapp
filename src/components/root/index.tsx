@@ -1,21 +1,34 @@
-import { Layout, Typography } from "antd";
+import { Avatar, Button, Divider, Layout, Space, Typography } from "antd";
 import { Outlet } from "react-router-dom";
+import { useAuth } from "../auth-context";
+import { UserOutlined } from "@ant-design/icons";
+import "./index.css";
 
-const { Header, Sider, Content } = Layout;
+const { Header, Sider, Content, Footer } = Layout;
 
 export default function RootPage() {
+  const auth = useAuth();
+
   return (
-    <Layout>
-      <Sider>
-        <div style={{ width: '30vh', height: '100vh' }} />
-      </Sider>
+    <Layout id="root-page">
+      <Sider></Sider>
       <Layout>
-        <Header style={{ backgroundColor: "initial", padding: 0 }}>
-          <div style={{ backgroundColor: 'yellow' }} />
+        <Header>
+          <Space direction="horizontal" align="end">
+            <Avatar icon={<UserOutlined />} />
+            <span>{auth.user ? auth.user.display_name : "unknown"}</span>
+            <Divider type="vertical" />
+            <Button type="default" danger onClick={auth.logout}>
+              Logout
+            </Button>
+          </Space>
         </Header>
-        <Content style={{ padding: 24 }}>
+        <Content>
           <Outlet />
         </Content>
+        <Footer>
+          &copy;2023 Nanyang Technological University. All rights reserved.
+        </Footer>
       </Layout>
     </Layout>
   );

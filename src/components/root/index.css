@@ -1,0 +1,30 @@
+#root-page {
+  width: 100vw;
+  min-width: 600px;
+  margin: auto;
+}
+
+#root-page header {
+  background-color: inherit;
+  text-align: right;
+  padding: 0px 24px;
+}
+
+#root-page header .ant-space {
+  width: 100%;
+  height: 100%;
+}
+
+#root-page aside {
+  min-height: 100vh;
+  position: sticky;
+}
+
+#root-page main {
+  margin: auto;
+  padding: 24px;
+}
+
+#root-page footer {
+  text-align: center;
+}

@@ -1,0 +1,21 @@
+#login-page {
+  max-width: 60vw;
+  min-width: 600px;
+  margin: auto;
+}
+
+#login-page header {
+  text-align: left;
+  color: white;
+}
+
+#login-page main {
+  height: 50vh;
+  text-align: center;
+  margin: auto;
+  padding: 50px;
+}
+
+#login-page footer {
+  text-align: center;
+}

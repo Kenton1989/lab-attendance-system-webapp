@@ -56,8 +56,9 @@ async function performCreateToken(
     resp = await jsonFetch(TOKEN_URL, undefined, {
       method: "POST",
       headers: {
-        authorization: authHeader,
+        Authorization: authHeader,
       },
+      credentials: "include",
     });
   } catch (e) {
     if (e instanceof Http4xxError && e.status == StatusCodes.UNAUTHORIZED) {
@@ -87,8 +88,9 @@ async function performRevokeToken(
     await jsonFetch(CURRENT_TOKEN_URL, undefined, {
       method: "DELETE",
       headers: {
-        authorization: `Token ${token}`,
+        Authorization: `Token ${token}`,
       },
+      credentials: "include",
     });
   } catch (e) {
     if (e instanceof Http4xxError && e.status == StatusCodes.UNAUTHORIZED) {
@@ -115,7 +117,7 @@ export async function basicAuth(
   password: string,
   storage = getDefaultAuthStorage()
 ): Promise<boolean> {
-  let credential = Buffer.from(`${username}:${password}`).toString("base64");
+  let credential = btoa(`${username}:${password}`);
   let authHeader = `Basic ${credential}`;
 
   return performCreateToken(authHeader, storage);
@@ -206,6 +208,7 @@ export async function authJsonFetch(
   let token = getToken(storage);
 
   headers.set("authorization", `Token ${token}`);
+  requestInit.credentials = "include";
 
   return jsonFetch(url, data, requestInit);
 }
