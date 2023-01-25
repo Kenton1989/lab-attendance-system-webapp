@@ -204,6 +204,7 @@ export async function authJsonFetch(
   let headers = getHeadersObj(requestInit);
 
   let token = getToken(storage);
+
   headers.set("authorization", `Token ${token}`);
 
   return jsonFetch(url, data, requestInit);

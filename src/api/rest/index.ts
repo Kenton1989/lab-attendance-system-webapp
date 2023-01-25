@@ -13,10 +13,12 @@ import {
   Week,
 } from "./model";
 
+export * from "./model";
+
 export class Api {
   week = new SimpleRestApi<Week>("/weeks");
   role = new SimpleRestApi<Role>("/roles");
-  user = new SimpleRestApi<User>("/users");
+  user = new SimpleRestApi<User, number | "me">("/users");
   my_role = new SimpleRestApi<Role>("/users/me/roles");
   my_managed_course = new SimpleRestApi<Course>("/users/me/managed_courses");
   my_managed_group = new SimpleRestApi<Group>("/users/me/managed_groups");
