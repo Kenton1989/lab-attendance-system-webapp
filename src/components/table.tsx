@@ -28,6 +28,10 @@ import { DEFAULT_PAGE_SIZE } from "./const";
 
 function doNothing() {}
 
+function identity(val: any) {
+  return val;
+}
+
 export type SimpleRestApiTableProps<DataType, FiltersType = any> = {
   api: SimpleRestApi<DataType>;
   columns: ColumnsType<DataType>;
@@ -45,8 +49,9 @@ export type SimpleRestApiTableProps<DataType, FiltersType = any> = {
   additionalCreateBodyParams?: DataType;
   additionalCreateRequestParams?: RequestOptions<DataType>;
   tableProps?: TableProps<DataType>;
-  formProps?: FormProps<FiltersType>;
   filterFormItems?: React.ReactNode;
+  filterFormProps?: FormProps<FiltersType>;
+  filterFormToParams?: (val: FiltersType) => UrlParamSet<DataType>;
 };
 
 function calLimitOffset(page: number, pageSize: number) {
@@ -94,8 +99,9 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
     allowUploadCsv = false,
     allowDownloadCsv = false,
     tableProps,
-    formProps,
+    filterFormProps,
     filterFormItems,
+    filterFormToParams = identity,
   } = props;
 
   // pagination states
@@ -188,10 +194,10 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
       setCurrentPage(1);
       setUrlParams({
         ...urlParams,
-        ...val,
+        ...filterFormToParams(val),
       });
     },
-    [urlParams]
+    [urlParams, filterFormToParams]
   );
 
   // reset page to 1 to avoid invalid page number when record counts changed
@@ -240,7 +246,7 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
     <Space direction="vertical" style={{ width: "100%" }}>
       {
         <FiltersForm
-          {...formProps}
+          {...filterFormProps}
           filterFormItems={filterFormItems}
           onSubmit={onFormSubmitted}
           disabled={loading}
@@ -273,7 +279,7 @@ function FiltersForm<FiltersType>(
     onSubmit?: FormProps<FiltersType>["onFinish"];
   } & FormProps<FiltersType>
 ) {
-  const { filterFormItems, onSubmit = doNothing, ...formProps } = props;
+  const { filterFormItems, onSubmit = doNothing, ...filterFormProps } = props;
 
   return (
     <>
@@ -281,7 +287,7 @@ function FiltersForm<FiltersType>(
         <Form
           size="small"
           layout="inline"
-          {...formProps}
+          {...filterFormProps}
           onFinish={onSubmit}
           wrapperCol={{
             style: { margin: "4px 0" },

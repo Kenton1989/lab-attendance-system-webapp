@@ -1,8 +1,8 @@
-import { Form } from "antd";
+import { Form, Tag } from "antd";
 import { ColumnsType } from "antd/es/table";
-import api, { Session } from "../../api";
+import api, { Session, Week } from "../../api";
 import { useAuth, useHasRole } from "../auth-context";
-import { UserSelect } from "../form-select-item";
+import { GroupSelect, LabSelect, WeekSelect } from "../form-select-item";
 import { useRootPageTitle } from "../root-page-context";
 import { SimpleRestApiTable } from "../table";
 
@@ -40,6 +40,13 @@ const SESSION_COLUMNS: ColumnsType<Session> = [
     width: "8em",
     render: (s: string) => new Date(s).toLocaleTimeString(),
   },
+  {
+    title: "Compulsory",
+    dataIndex: "is_compulsory",
+    width: "8em",
+    render: (val: boolean) =>
+      val ? <Tag color="success">YES</Tag> : <Tag color="gray">NO</Tag>,
+  },
 ];
 
 const READABLE_ROLES = ["staff", "admin"];
@@ -59,8 +66,19 @@ export function SessionList(props: {}) {
       allowCreate={canCreate}
       allowUploadCsv={canCreate}
       allowDownloadCsv
-      filterFormItems={<></>}
-      // allowCreate
+      filterFormItems={
+        <>
+          <Form.Item label="Group" name="group">
+            <GroupSelect />
+          </Form.Item>
+          <Form.Item label="Lab" name="lab">
+            <LabSelect />
+          </Form.Item>
+          <Form.Item label="Week" name="week">
+            <WeekSelect />
+          </Form.Item>
+        </>
+      }
     />
   );
 }
