@@ -1,5 +1,5 @@
 import { Session } from "inspector";
-import SimpleRestApi, { PreferenceApi } from "./operations";
+import { SimpleRestApi, PreferenceApi } from "./operations";
 import {
   Course,
   Group,
@@ -14,11 +14,12 @@ import {
 } from "./model";
 
 export * from "./model";
+export * from "./operations";
 
 export class Api {
   week = new SimpleRestApi<Week>("/weeks");
   role = new SimpleRestApi<Role>("/roles");
-  user = new SimpleRestApi<User, number | "me">("/users");
+  user = new SimpleRestApi<User>("/users");
   my_role = new SimpleRestApi<Role>("/users/me/roles");
   my_managed_course = new SimpleRestApi<Course>("/users/me/managed_courses");
   my_managed_group = new SimpleRestApi<Group>("/users/me/managed_groups");
@@ -35,18 +36,19 @@ export class Api {
   my_teacher_attendance_course_options = new SimpleRestApi<Course>(
     "/users/me/teacher_attendance/course_options"
   );
-  lab = new SimpleRestApi<Lab>("/lab");
-  group = new SimpleRestApi<Group>("/group");
-  group_student = new SimpleRestApi<GroupStudent>("/group_student");
-  session = new SimpleRestApi<Session>("/session");
+  lab = new SimpleRestApi<Lab>("/labs");
+  course = new SimpleRestApi<Course>("/courses");
+  group = new SimpleRestApi<Group>("/groups");
+  group_student = new SimpleRestApi<GroupStudent>("/group_students");
+  session = new SimpleRestApi<Session>("/sessions");
   student_make_up_session = new SimpleRestApi<StudentMakeUpSession>(
-    "/student_make_up_session"
+    "/student_make_up_sessions"
   );
   student_attendance = new SimpleRestApi<StudentAttendance>(
-    "/student_attendance"
+    "/student_attendances"
   );
   teacher_attendance = new SimpleRestApi<StudentAttendance>(
-    "/teacher_attendance"
+    "/teacher_attendances"
   );
   student_attendance_stats = new SimpleRestApi<any>(
     "/student_attendances/statistics"

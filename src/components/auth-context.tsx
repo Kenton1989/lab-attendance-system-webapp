@@ -1,16 +1,17 @@
 import React, {
   createContext,
   PropsWithChildren,
-  ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
   useState,
 } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { basicAuth, getToken, revokeToken } from "../api/auth";
+import { basicAuth, revokeToken } from "../api/auth";
 import { User } from "../api/rest";
 import { getCurrentUser } from "../api/user";
+import { DEFAULT_404_PATH } from "./const";
 
 interface AuthContextType {
   loginPagePath: string;
@@ -59,64 +60,64 @@ export function AuthProvider(
   //
   // Finally, just signal the component that loading the
   // loading state is over.
-  async function login(
-    username: string,
-    password: string,
-    redirectWhenSuccess?: string
-  ): Promise<boolean> {
-    setLoading(true);
-    try {
-      let success = await basicAuth(username, password);
-      if (!success) return false;
+  const login = useCallback(
+    async (
+      username: string,
+      password: string,
+      redirectWhenSuccess?: string
+    ): Promise<boolean> => {
+      setLoading(true);
+      try {
+        let success = await basicAuth(username, password);
+        if (!success) return false;
 
-      let user = await getCurrentUser();
-      setUser(user);
+        let user = await getCurrentUser();
+        setUser(user);
 
-      if (redirectWhenSuccess) {
-        navigate(redirectWhenSuccess);
+        if (redirectWhenSuccess) {
+          navigate(redirectWhenSuccess);
+        }
+
+        return true;
+      } catch (e) {
+        setError(e);
+        return false;
+      } finally {
+        setLoading(false);
       }
-
-      return true;
-    } catch (e) {
-      setError(e);
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  }
+    },
+    [navigate]
+  );
 
   // Call the logout endpoint and then remove the user
   // from the state.
-  async function logout(redirectWhenSuccess?: string): Promise<boolean> {
-    setLoading(true);
-    try {
-      let success = await revokeToken();
-      if (!success) return false;
+  const logout = useCallback(
+    async (redirectWhenSuccess?: string): Promise<boolean> => {
+      setLoading(true);
+      try {
+        let success = await revokeToken();
+        if (!success) return false;
 
-      setUser(undefined);
+        setUser(undefined);
 
-      if (redirectWhenSuccess) {
-        navigate(redirectWhenSuccess);
+        if (redirectWhenSuccess) {
+          navigate(redirectWhenSuccess);
+        }
+
+        return true;
+      } catch (e) {
+        setError(e);
+        return false;
+      } finally {
+        setLoading(false);
       }
-
-      return true;
-    } catch (e) {
-      setError(e);
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  }
+    },
+    [navigate]
+  );
 
   // Make the provider update only when it should.
   // We only want to force re-renders if the user,
   // loading or error states change.
-  //
-  // Whenever the `value` passed into a provider changes,
-  // the whole tree under the provider re-renders, and
-  // that can be very costly! Even in this case, where
-  // you only get re-renders when logging in and out
-  // we want to keep things very performant.
   const memoedValue = useMemo<AuthContextType>(
     () => ({
       loginPagePath: props.loginPagePath,
@@ -126,7 +127,7 @@ export function AuthProvider(
       login,
       logout,
     }),
-    [user, loading, error, props.loginPagePath]
+    [user, loading, error, props.loginPagePath, login, logout]
   );
 
   // Only render the underlying app after we
@@ -138,30 +139,59 @@ export function AuthProvider(
   );
 }
 
-/**
- * get the authentication context
- * @returns authentication context
- */
-export function useAuth() {
-  return useContext(AuthContext);
-}
+export type UseAuthOptions = {
+  loginRequired?: boolean; // if login is required
+  redirectOnNoLogin?: string; // if login is required and user does not log in, where to redirect.
+  rolesPermitted?: Array<string>; // if not undefined, role checking is performed. User must have at least one role in the list.
+  redirectOnBadRole?: string; // if the user has not permitted role, where to redirect.
+};
 
 /**
- * Get the authentication context if the user is login.
- * Otherwise, redirect to the login page. The login page
- * can be defined in the properties of {@link AuthProvider}.
+ * Get the authentication context and perform some checking.
+ * Perform redirecting if the auth checking failed.
  *
- * @param loginPagePath the path to the login page
- * @returns authentication context
+ * @param options auth checking options
+ * @returns authentication context and if all auth checking passed.
  */
-export function useRequireLogin() {
+export function useAuth(options: UseAuthOptions = {}): {
+  auth: AuthContextType;
+  authOk: boolean;
+} {
+  let {
+    loginRequired = false, // login is not required by default
+    redirectOnNoLogin = undefined, // redirect to authContext.loginPath by default
+    rolesPermitted = undefined, // no role checking by default
+    redirectOnBadRole = DEFAULT_404_PATH, // redirect to 404 page by default
+  } = options;
+
+  if (rolesPermitted !== undefined) {
+    loginRequired = true;
+  }
+
+  let auth = useContext(AuthContext);
   const navigate = useNavigate();
-  let res = useContext(AuthContext);
+  let authOk = true;
+  let redirect = "";
+
+  if (loginRequired && !auth.user) {
+    authOk = false;
+    redirect = redirectOnNoLogin ?? auth.loginPagePath;
+  } else if (rolesPermitted !== undefined) {
+    authOk = auth.user!.roles!.some(({ name }) => {
+      return rolesPermitted!.includes(name!);
+    });
+    redirect = redirectOnBadRole;
+  }
 
   useEffect(() => {
-    if (!res.user) {
-      navigate(res.loginPagePath);
+    if (!authOk) {
+      navigate(redirect);
     }
-  }, [res.user, navigate, res.loginPagePath]);
-  return res;
+  });
+
+  if (auth.error) {
+    throw auth.error;
+  }
+
+  return { auth, authOk };
 }

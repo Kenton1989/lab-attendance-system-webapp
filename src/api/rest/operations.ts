@@ -1,6 +1,6 @@
 import { authJsonFetch } from "../auth";
 import { getUrl } from "../url";
-import { PreferenceSet as PreferenceSet } from "./model";
+import { PreferenceSet } from "./model";
 
 export type UrlParamSet<DataType> = {
   fields?: keyof DataType | Array<keyof DataType>;
@@ -42,7 +42,7 @@ export type SimplePatch<T> = {
   [k in keyof T]?: T[k];
 };
 
-export default class SimpleRestApi<DataType, IdType = number> {
+export class SimpleRestApi<DataType, IdType = number | string> {
   urlBase: string;
 
   constructor(urlBase: string) {

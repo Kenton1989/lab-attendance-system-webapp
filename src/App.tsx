@@ -1,14 +1,6 @@
 import React from "react";
 import "./App.css";
-import {
-  Navigate,
-  Route,
-  createBrowserRouter,
-  createRoutesFromElements,
-  RouterProvider,
-  BrowserRouter,
-  Routes,
-} from "react-router-dom";
+import { Navigate, Route, BrowserRouter, Routes } from "react-router-dom";
 import RootPage from "./components/root";
 import Login from "./components/login";
 import NotFount404 from "./components/not-found";
@@ -16,15 +8,23 @@ import DummyComponent from "./components/dummy";
 import { Empty } from "antd";
 import { AuthProvider } from "./components/auth-context";
 import { Home } from "./components/home";
+import InternalServerError500 from "./components/internal-server-error";
+import { ErrorBoundary } from "./components/error-boundary";
+import { DEFAULT_LOGIN_PATH } from "./components/const";
+import { CourseList } from "./components/course";
 
 function App() {
-  return <PageRouter />;
+  return (
+    <ErrorBoundary>
+      <PageRouter />
+    </ErrorBoundary>
+  );
 }
 
 function PageRouter(): JSX.Element {
   return (
     <BrowserRouter>
-      <AuthProvider loginPagePath="/login">
+      <AuthProvider loginPagePath={DEFAULT_LOGIN_PATH}>
         <Routes>
           <Route path="" element={<RootPage />}>
             <Route index element={<Navigate to="/home" />} />
@@ -34,7 +34,7 @@ function PageRouter(): JSX.Element {
               <Route path=":userId" element={<DummyComponent />} />
             </Route>
             <Route path="courses">
-              <Route index element={<DummyComponent />} />
+              <Route index element={<CourseList />} />
               <Route path=":courseId" element={<DummyComponent />} />
             </Route>
             <Route path="groups">
@@ -84,6 +84,7 @@ function PageRouter(): JSX.Element {
           </Route>
           <Route path="login" element={<Login />} />
           <Route path="404" element={<NotFount404 />} />
+          <Route path="500" element={<InternalServerError500 />} />
           <Route path="*" element={<Navigate to="/404" />} />
         </Routes>
       </AuthProvider>

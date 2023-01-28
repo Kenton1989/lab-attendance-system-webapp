@@ -55,7 +55,7 @@ async function checkStatus(resp: Response) {
  * @returns true if the body is empty
  */
 export async function bodyIsEmpty(resp: Response): Promise<boolean> {
-  if (resp.status == StatusCodes.NO_CONTENT) {
+  if (resp.status === StatusCodes.NO_CONTENT) {
     return true;
   }
   if (!resp.body) {

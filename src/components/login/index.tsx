@@ -1,21 +1,22 @@
 import { useAuth } from "../auth-context";
-import { Alert, Button, Form, Input, Layout, message, Space } from "antd";
+import { Button, Form, Input, Layout, message } from "antd";
 import "./index.css";
-import { basicAuth } from "../../api";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { DEFAULT_HOME_PATH } from "../const";
 
-const { Header, Footer, Sider, Content } = Layout;
+const { Header, Footer, Content } = Layout;
 
 export default function Login(props: {
   defaultRedirect?: string;
   redirectKey?: string;
 }): JSX.Element {
-  const { defaultRedirect = "/home", redirectKey = "redirect" } = props;
+  const { defaultRedirect = DEFAULT_HOME_PATH, redirectKey = "redirect" } =
+    props;
 
-  const auth = useAuth();
+  const { auth } = useAuth();
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   const redirectOnLogin = searchParams.get(redirectKey) ?? defaultRedirect;
 

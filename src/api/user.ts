@@ -10,9 +10,14 @@ export async function getCurrentUser(
   if (!token) return undefined;
 
   try {
-    return api.user.retrieve("me");
+    return await api.user.retrieve("me", {
+      urlParams: {
+        fields: ["id", "username", "display_name", "email", "roles"],
+      },
+    });
   } catch (e) {
     if (e instanceof Http4xxError && e.status === StatusCodes.UNAUTHORIZED) {
+      console.warn("accessing page without login");
       return undefined;
     }
     throw e;
