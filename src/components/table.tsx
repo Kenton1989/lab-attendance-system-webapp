@@ -4,11 +4,15 @@ import {
   UploadOutlined,
 } from "@ant-design/icons";
 import { Button, Form, FormProps, Input, Space, Table, TableProps } from "antd";
-import { ColumnsType } from "antd/es/table";
+import { ColumnsType, TablePaginationConfig } from "antd/es/table";
+import { FilterValue, SorterResult } from "antd/es/table/interface";
 import { useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { SimpleRestApi, UrlParamSet, RequestOptions } from "../api";
 import { useApiData } from "./backend";
 import { DEFAULT_PAGE_SIZE } from "./const";
+
+function doNothing() {}
 
 export type SimpleRestApiTableProps<DataType, FiltersType = any> = {
   api: SimpleRestApi<DataType>;
@@ -18,9 +22,11 @@ export type SimpleRestApiTableProps<DataType, FiltersType = any> = {
   allowCreate?: boolean;
   allowUploadCsv?: boolean;
   allowDownloadCsv?: boolean;
-  pageSize?: number;
-  additionalUrlParams?: UrlParamSet<DataType>;
+  defaultPageSize?: number;
+  additionalListUrlParams?: UrlParamSet<DataType>;
   additionalListRequestParams?: RequestOptions<DataType>;
+  additionalCreateBodyParams?: DataType;
+  additionalCreateRequestParams?: RequestOptions<DataType>;
   tableProps?: TableProps<DataType>;
   formProps?: FormProps<FiltersType>;
   filterFormItems?: React.ReactNode;
@@ -29,8 +35,30 @@ export type SimpleRestApiTableProps<DataType, FiltersType = any> = {
 function calLimitOffset(page: number, pageSize: number) {
   return {
     limit: pageSize,
-    offset: pageSize * page,
+    offset: Math.max(pageSize * (page - 1), 0),
   };
+}
+
+function formatOrderingQuery<DataType>(
+  sorter: SorterResult<DataType> | SorterResult<DataType>[]
+): string[] {
+  if (!Array.isArray(sorter)) {
+    sorter = [sorter];
+  }
+
+  console.log(sorter);
+
+  return sorter.reduce((pre, s) => {
+    if (!s.order) {
+      return pre;
+    }
+
+    let prefix = "";
+    if (s.order === "descend") {
+      prefix = "-";
+    }
+    return [...pre, `${prefix}${s.field}`];
+  }, new Array<string>());
 }
 
 export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
@@ -40,8 +68,8 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
     api,
     columns,
     formatItemPath,
-    pageSize = DEFAULT_PAGE_SIZE,
-    additionalUrlParams,
+    defaultPageSize = DEFAULT_PAGE_SIZE,
+    additionalListUrlParams,
     additionalListRequestParams,
     allowSearch = false,
     allowCreate = false,
@@ -52,44 +80,74 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
     filterFormItems,
   } = props;
 
-  const [searchQuery, setSearchQuery] = useState("");
+  const [urlParams, setUrlParams] = useState<UrlParamSet<DataType>>({
+    ...additionalListUrlParams,
+    limit: defaultPageSize,
+    offset: 0,
+  });
+  const navigate = useNavigate();
 
-  const loadData = useCallback(
-    async (page = 0, urlParams?: UrlParamSet<DataType>) => {
-      const pagination = calLimitOffset(page, pageSize);
+  const loadData = useCallback(async () => {
+    const data = await api.list({
+      urlParams,
+      ...additionalListRequestParams,
+    });
 
-      const data = await api.list({
-        urlParams: {
-          ...additionalUrlParams,
-          ...pagination,
-          search: searchQuery,
-          ...urlParams,
-        },
-        ...additionalListRequestParams,
-      });
+    if (Array.isArray(data)) {
+      throw TypeError(
+        `expecting paginated result from ${api.urlBase} but got an array`
+      );
+    }
 
-      if (Array.isArray(data)) {
-        throw TypeError(
-          `expecting paginated result from ${api.urlBase} but got an array`
-        );
-      }
+    return data;
+  }, [api, urlParams, additionalListRequestParams]);
 
-      return data;
-    },
-    [
-      api,
-      pageSize,
-      additionalUrlParams,
-      additionalListRequestParams,
-      searchQuery,
-    ]
+  const getRowProps = useCallback(
+    (record: DataType) => ({
+      onClick: () => {
+        navigate(formatItemPath(record));
+      },
+    }),
+    [navigate, formatItemPath]
   );
 
   const { data, loading } = useApiData(loadData);
 
+  const onTableChanged = useCallback(
+    (
+      pagination: TablePaginationConfig,
+      filters: Record<string, FilterValue | null>,
+      sorter: SorterResult<DataType> | SorterResult<DataType>[]
+    ) => {
+      setUrlParams({
+        ...urlParams,
+        ...calLimitOffset(pagination.current!, pagination.pageSize!),
+        ...filters,
+        ordering: formatOrderingQuery(sorter),
+      });
+    },
+    [urlParams]
+  );
+
+  const onFormSubmitted = useCallback(
+    (val: FiltersType) => {
+      setUrlParams({
+        ...urlParams,
+        ...val,
+      });
+    },
+    [urlParams]
+  );
+
   return (
-    <>
-      {filterFormItems && <Form {...formProps}>{filterFormItems}</Form>}
+    <Space direction="vertical" style={{ width: "100%" }}>
+      {
+        <FiltersForm
+          {...formProps}
+          filterFormItems={filterFormItems}
+          onSubmit={onFormSubmitted}
+        />
+      }
       <Table
         loading={loading}
         columns={columns}
@@ -99,13 +157,19 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
         pagination={{
           total: data?.count,
           defaultCurrent: 1,
-          defaultPageSize: pageSize,
+          defaultPageSize: defaultPageSize,
           hideOnSinglePage: true,
         }}
         title={() => (
           <Space>
             {allowSearch && (
-              <Input.Search placeholder="search..." onSearch={setSearchQuery} />
+              <Input.Search
+                size="small"
+                placeholder="search..."
+                onSearch={(val) => {
+                  setUrlParams({ ...urlParams, search: val });
+                }}
+              />
             )}
             {allowCreate && <Button icon={<PlusOutlined />}>Add</Button>}
             {allowUploadCsv && (
@@ -116,8 +180,34 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
             )}
           </Space>
         )}
+        onRow={getRowProps}
+        onChange={onTableChanged}
         {...tableProps}
       />
+    </Space>
+  );
+}
+
+function FiltersForm<FiltersType>(
+  props: {
+    filterFormItems?: React.ReactNode;
+    onSubmit?: FormProps<FiltersType>["onFinish"];
+  } & FormProps<FiltersType>
+) {
+  const { filterFormItems, onSubmit = doNothing, ...formProps } = props;
+
+  return (
+    <>
+      {filterFormItems && (
+        <Form size="small" layout="inline" {...formProps} onFinish={onSubmit}>
+          {filterFormItems}
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Apply Filters
+            </Button>
+          </Form.Item>
+        </Form>
+      )}
     </>
   );
 }

@@ -11,7 +11,8 @@ import { Home } from "./components/home";
 import InternalServerError500 from "./components/internal-server-error";
 import { ErrorBoundary } from "./components/error-boundary";
 import { DEFAULT_LOGIN_PATH } from "./components/const";
-import { CourseList } from "./components/course";
+import { CourseDetail, CourseList } from "./components/course";
+import { UserDetail, UserList } from "./components/user";
 
 function App() {
   return (
@@ -30,12 +31,12 @@ function PageRouter(): JSX.Element {
             <Route index element={<Navigate to="/home" />} />
             <Route path="home" element={<Home />} />
             <Route path="users">
-              <Route index element={<DummyComponent />} />
-              <Route path=":userId" element={<DummyComponent />} />
+              <Route index element={<UserList />} />
+              <Route path=":userId" element={<UserDetail />} />
             </Route>
             <Route path="courses">
               <Route index element={<CourseList />} />
-              <Route path=":courseId" element={<DummyComponent />} />
+              <Route path=":courseId" element={<CourseDetail />} />
             </Route>
             <Route path="groups">
               <Route index element={<DummyComponent />} />

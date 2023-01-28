@@ -7,6 +7,7 @@ export type UrlParamSet<DataType> = {
   limit?: number;
   offset?: number;
   ordering?: string | Array<string>;
+  search?: string;
   [k: string]: any;
 };
 
@@ -14,13 +15,17 @@ function formatUrlParamValue(val: any): string {
   if (Array.isArray(val)) {
     return val.join(",");
   }
+  if (!val && val !== false) {
+    return "";
+  }
   return val.toString();
 }
 
 function createUrlParamObj(params?: UrlParamSet<any>): URLSearchParams {
   let res = new URLSearchParams();
   for (const k in params) {
-    res.set(k, formatUrlParamValue(params[k]));
+    const val = formatUrlParamValue(params[k]);
+    if (val) res.set(k, val);
   }
   return res;
 }

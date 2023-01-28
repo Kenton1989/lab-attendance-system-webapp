@@ -61,7 +61,7 @@ async function performCreateToken(
       credentials: "include",
     });
   } catch (e) {
-    if (e instanceof Http4xxError && e.status == StatusCodes.UNAUTHORIZED) {
+    if (e instanceof Http4xxError && e.status === StatusCodes.UNAUTHORIZED) {
       return false;
     }
     throw e;
@@ -93,7 +93,7 @@ async function performRevokeToken(
       credentials: "include",
     });
   } catch (e) {
-    if (e instanceof Http4xxError && e.status == StatusCodes.UNAUTHORIZED) {
+    if (e instanceof Http4xxError && e.status === StatusCodes.UNAUTHORIZED) {
       return false;
     }
     throw e;
