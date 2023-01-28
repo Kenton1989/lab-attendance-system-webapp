@@ -9,3 +9,5 @@ export {
   refreshExpiringToken,
   revokeToken,
 } from "./auth";
+
+export { getCurrentUser, userHasRole } from "./user";

@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import "./index.css";
 import { RootPageContextProvider } from "../root-page-context";
 import HeaderBar from "./header-bar";
+import { NavBar } from "./nav-bar";
 
 const { Header, Sider, Content, Footer } = Layout;
 
@@ -10,7 +11,9 @@ export default function RootPage() {
   return (
     <RootPageContextProvider>
       <Layout id="root-page">
-        <Sider></Sider>
+        <Sider breakpoint="md" collapsedWidth="0">
+          <NavBar />
+        </Sider>
         <Layout>
           <Header>
             <HeaderBar />

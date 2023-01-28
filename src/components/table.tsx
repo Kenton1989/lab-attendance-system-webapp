@@ -17,7 +17,12 @@ import { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import { FilterValue, SorterResult } from "antd/es/table/interface";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { SimpleRestApi, UrlParamSet, RequestOptions } from "../api";
+import {
+  SimpleRestApi,
+  UrlParamSet,
+  RequestOptions,
+  PaginatedListResponse,
+} from "../api";
 import { useApiData } from "./backend";
 import { DEFAULT_PAGE_SIZE } from "./const";
 
@@ -27,6 +32,7 @@ export type SimpleRestApiTableProps<DataType, FiltersType = any> = {
   api: SimpleRestApi<DataType>;
   columns: ColumnsType<DataType>;
   formatItemPath: (item: DataType) => string;
+  onDataLoaded?: (data: PaginatedListResponse<DataType>) => unknown;
   allowFilterByIsActive?: boolean;
   allowSearch?: boolean;
   allowCreate?: boolean;
@@ -76,6 +82,7 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
     api,
     columns,
     formatItemPath,
+    onDataLoaded = doNothing,
     defaultPageSize = DEFAULT_PAGE_SIZE,
     additionalListUrlParams,
     additionalListRequestParams,
@@ -116,8 +123,17 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
       );
     }
 
+    onDataLoaded(data);
+
     return data;
-  }, [api, urlParams, additionalListRequestParams, currentPage, pageSize]);
+  }, [
+    api,
+    urlParams,
+    additionalListRequestParams,
+    currentPage,
+    pageSize,
+    onDataLoaded,
+  ]);
 
   const getRowProps = useCallback(
     (record: DataType) => ({

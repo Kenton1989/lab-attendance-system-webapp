@@ -10,7 +10,7 @@ import React, {
 import { useLocation, useNavigate } from "react-router-dom";
 import { basicAuth, revokeToken } from "../api/auth";
 import { User } from "../api/rest";
-import { getCurrentUser } from "../api/user";
+import { getCurrentUser, userHasRole } from "../api";
 import { DEFAULT_404_PATH } from "./const";
 
 interface AuthContextType {
@@ -176,10 +176,8 @@ export function useAuth(options: UseAuthOptions = {}): {
   if (loginRequired && !auth.user) {
     authOk = false;
     redirect = redirectOnNoLogin ?? auth.loginPagePath;
-  } else if (rolesPermitted !== undefined) {
-    authOk = auth.user!.roles!.some(({ name }) => {
-      return rolesPermitted!.includes(name!);
-    });
+  } else if (auth.user && rolesPermitted !== undefined) {
+    authOk = userHasRole(auth.user, rolesPermitted);
     redirect = redirectOnBadRole;
   }
 

@@ -7,7 +7,7 @@
 #root-page header {
   background-color: inherit;
   text-align: right;
-  padding: 0px 24px;
+  padding: 0px 50px;
 }
 
 #root-page header .ant-space {
@@ -16,12 +16,15 @@
 }
 
 #root-page aside {
-  min-height: 100vh;
+  height: 100vh;
   position: sticky;
+  top: 0px;
+  left: 0px;
+  z-index: 10;
 }
 
 #root-page main {
-  padding: 0px 24px;
+  padding: 0px 50px;
 }
 
 #root-page footer {

@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import { getDefaultAuthStorage, getToken } from "./auth";
 import { Http4xxError } from "./fetch";
-import api, { User } from "./rest";
+import api, { Role, User } from "./rest";
 
 export async function getCurrentUser(
   storage = getDefaultAuthStorage()
@@ -22,4 +22,19 @@ export async function getCurrentUser(
     }
     throw e;
   }
+}
+
+export function userHasRole(
+  user: User,
+  roles: Role | string | Array<Role | string>
+): boolean {
+  if (!user.roles) return false;
+
+  if (!Array.isArray(roles)) {
+    roles = [roles];
+  }
+
+  const strRoles = roles.map((r) => (typeof r === "string" ? r : r.name));
+
+  return user.roles.some(({ name }) => strRoles.includes(name));
 }
