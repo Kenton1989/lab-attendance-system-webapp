@@ -25,10 +25,10 @@ export async function getCurrentUser(
 }
 
 export function userHasRole(
-  user: User,
+  user: User | undefined,
   roles: Role | string | Array<Role | string>
 ): boolean {
-  if (!user.roles) return false;
+  if (!user?.roles) return false;
 
   if (!Array.isArray(roles)) {
     roles = [roles];

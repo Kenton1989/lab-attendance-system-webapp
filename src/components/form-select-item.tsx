@@ -1,7 +1,17 @@
 import { Select, SelectProps, Spin } from "antd";
 import { LabeledValue } from "antd/es/select";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { RequestOptions, SimpleRestApi, UrlParamSet } from "../api";
+import api, {
+  Course,
+  Group,
+  Lab,
+  RequestOptions,
+  Role,
+  SimpleRestApi,
+  UrlParamSet,
+  User,
+  Week,
+} from "../api";
 import {
   DEFAULT_SELECT_LIST_SIZE,
   DEFAULT_SELECT_SEARCH_DELAY_MS,
@@ -101,4 +111,91 @@ export function SimpleRestApiSelect<DataType>(
       onSearch={debounceUpdateSearch}
     />
   );
+}
+
+type Partial<T> = {
+  [k in keyof T]?: T[k];
+};
+
+function formatUserLabel(val: User) {
+  return `${val.display_name || val.username} (${val.username})`;
+}
+
+export function UserSelect(props: Partial<SimpleRestApiSelectProps<User>>) {
+  const finalProps: SimpleRestApiSelectProps<User> = {
+    api: api.user,
+    formatLabel: formatUserLabel,
+    ...props,
+    style: { minWidth: "16em", ...props.style },
+  };
+  return <SimpleRestApiSelect {...finalProps} />;
+}
+
+function formatRoleLabel(val: Role) {
+  return val.name;
+}
+
+export function RoleSelect(props: Partial<SimpleRestApiSelectProps<Role>>) {
+  const finalProps: SimpleRestApiSelectProps<Role> = {
+    api: api.role,
+    formatLabel: formatRoleLabel,
+    ...props,
+    style: { minWidth: "8em", ...props.style },
+  };
+  return <SimpleRestApiSelect {...finalProps} />;
+}
+
+function formatCourseLabel(val: Course) {
+  return val.code;
+}
+
+export function CourseSelect(props: Partial<SimpleRestApiSelectProps<Course>>) {
+  const finalProps: SimpleRestApiSelectProps<Course> = {
+    api: api.course,
+    formatLabel: formatCourseLabel,
+    ...props,
+    style: { minWidth: "8em", ...props.style },
+  };
+  return <SimpleRestApiSelect {...finalProps} />;
+}
+function formatLabLabel(val: Lab) {
+  return val.username;
+}
+
+export function LabSelect(props: Partial<SimpleRestApiSelectProps<Lab>>) {
+  const finalProps: SimpleRestApiSelectProps<Lab> = {
+    api: api.lab,
+    formatLabel: formatLabLabel,
+    ...props,
+    style: { minWidth: "8em", ...props.style },
+  };
+  return <SimpleRestApiSelect {...finalProps} />;
+}
+
+function formatGroupLabel(val: Group) {
+  return `${val.course?.code} ${val.name}`;
+}
+
+export function GroupSelect(props: Partial<SimpleRestApiSelectProps<Group>>) {
+  const finalProps: SimpleRestApiSelectProps<Group> = {
+    api: api.group,
+    formatLabel: formatGroupLabel,
+    ...props,
+    style: { minWidth: "16em", ...props.style },
+  };
+  return <SimpleRestApiSelect {...finalProps} />;
+}
+
+function formatWeekLabel(val: Week) {
+  return val.name;
+}
+
+export function WeekSelect(props: Partial<SimpleRestApiSelectProps<Week>>) {
+  const finalProps: SimpleRestApiSelectProps<Week> = {
+    api: api.week,
+    formatLabel: formatWeekLabel,
+    ...props,
+    style: { minWidth: "8em", ...props.style },
+  };
+  return <SimpleRestApiSelect {...finalProps} />;
 }

@@ -1,8 +1,8 @@
 import { Form } from "antd";
 import { ColumnsType } from "antd/es/table";
-import api, { Course, User } from "../../api";
-import { useAuth } from "../auth-context";
-import { SimpleRestApiSelect } from "../form-select-item";
+import api, { Course } from "../../api";
+import { useAuth, useHasRole } from "../auth-context";
+import { UserSelect } from "../form-select-item";
 import { useRootPageTitle } from "../root-page-context";
 import { SimpleRestApiTable } from "../table";
 
@@ -18,13 +18,13 @@ const COURSE_COLUMNS: ColumnsType<Course> = [
   },
 ];
 
-function formatUserLabel(val: User) {
-  return `${val.display_name} (${val.username})`;
-}
+const READABLE_ROLES = ["staff", "admin"];
+const CREATABLE_ROLES = ["admin"];
 
 export function CourseList(props: {}) {
-  useAuth({ rolesPermitted: ["staff", "admin"] });
-  useRootPageTitle("courses");
+  useRootPageTitle("Courses");
+  useAuth({ rolesPermitted: READABLE_ROLES });
+  const canCreate = useHasRole(CREATABLE_ROLES);
 
   return (
     <SimpleRestApiTable
@@ -32,14 +32,13 @@ export function CourseList(props: {}) {
       formatItemPath={({ id }) => `/courses/${id}`}
       columns={COURSE_COLUMNS}
       allowSearch
+      allowCreate={canCreate}
+      allowUploadCsv={canCreate}
+      allowDownloadCsv
       filterFormItems={
         <>
           <Form.Item label="Course Coordinator" name="coordinators_contain">
-            <SimpleRestApiSelect
-              api={api.user}
-              formatLabel={formatUserLabel}
-              style={{ minWidth: "16em" }}
-            />
+            <UserSelect />
           </Form.Item>
         </>
       }

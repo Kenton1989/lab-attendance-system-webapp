@@ -15,6 +15,7 @@ export type User = {
 
 export type Week = {
   id?: number;
+  name?: string;
   monday?: string;
   next_monday?: string;
   is_active?: boolean;

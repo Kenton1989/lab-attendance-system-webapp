@@ -1,4 +1,3 @@
-import { Session } from "inspector";
 import { SimpleRestApi, PreferenceApi } from "./operations";
 import {
   Course,
@@ -6,6 +5,7 @@ import {
   GroupStudent,
   Lab,
   Role,
+  Session,
   StudentAttendance,
   StudentMakeUpSession,
   TeacherAttendance,

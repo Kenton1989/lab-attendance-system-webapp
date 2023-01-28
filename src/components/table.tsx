@@ -33,6 +33,7 @@ export type SimpleRestApiTableProps<DataType, FiltersType = any> = {
   columns: ColumnsType<DataType>;
   formatItemPath: (item: DataType) => string;
   onDataLoaded?: (data: PaginatedListResponse<DataType>) => unknown;
+  hideTableHeader?: boolean;
   allowFilterByIsActive?: boolean;
   allowSearch?: boolean;
   allowCreate?: boolean;
@@ -86,6 +87,7 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
     defaultPageSize = DEFAULT_PAGE_SIZE,
     additionalListUrlParams,
     additionalListRequestParams,
+    hideTableHeader = false,
     allowFilterByIsActive = true,
     allowSearch = false,
     allowCreate = false,
@@ -96,15 +98,17 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
     filterFormItems,
   } = props;
 
+  // pagination states
+  const [pageSize, setPageSize] = useState(defaultPageSize);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // used when sending GET request to backend
   const [urlParams, setUrlParams] = useState<UrlParamSet<DataType>>({
     ...additionalListUrlParams,
     limit: defaultPageSize,
     offset: 0,
     is_active: true,
   });
-
-  const [pageSize, setPageSize] = useState(defaultPageSize);
-  const [currentPage, setCurrentPage] = useState(1);
 
   const navigate = useNavigate();
 
@@ -135,17 +139,24 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
     onDataLoaded,
   ]);
 
+  // useApiData will call loadData when it changed.
+  // loadData is defined using useCallback, which means the change of
+  // dependencies will incur the change of loadData. Therefore,
+  // the updating of data is done by updating the dependencies.
+  const { data, loading } = useApiData(loadData);
+
+  // used to add listeners to table row
   const getRowProps = useCallback(
     (record: DataType) => ({
       onClick: () => {
+        // navigate to the path representing the corresponding item
         navigate(formatItemPath(record));
       },
     }),
     [navigate, formatItemPath]
   );
 
-  const { data, loading } = useApiData(loadData);
-
+  // maintain the urlParams and pagination data when the table changed.
   const onTableChanged = useCallback(
     (
       pagination: TablePaginationConfig,
@@ -153,6 +164,7 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
       sorter: SorterResult<DataType> | SorterResult<DataType>[]
     ) => {
       if (pageSize !== pagination.pageSize) {
+        // reset page to 1 to avoid invalid page number when page size changed
         setCurrentPage(1);
       } else {
         setCurrentPage(pagination.current!);
@@ -169,8 +181,11 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
     [urlParams, pageSize]
   );
 
+  // add filter params to urlParams when the filter form are submitted
   const onFormSubmitted = useCallback(
     (val: FiltersType) => {
+      // reset page to 1 to avoid invalid page number
+      setCurrentPage(1);
       setUrlParams({
         ...urlParams,
         ...val,
@@ -179,6 +194,7 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
     [urlParams]
   );
 
+  // reset page to 1 to avoid invalid page number when record counts changed
   useEffect(() => {
     setCurrentPage(1);
   }, [data?.count]);
@@ -186,6 +202,39 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
   const dataLength = data?.results?.length ?? 0;
   const dataSource =
     dataLength > pageSize ? data?.results?.slice(0, pageSize) : data?.results;
+
+  const renderTableHeader = () => (
+    <Space>
+      {allowSearch && (
+        <Input.Search
+          size="small"
+          placeholder="search..."
+          onSearch={(val) => {
+            setUrlParams({ ...urlParams, search: val });
+          }}
+          allowClear
+        />
+      )}
+      {allowFilterByIsActive && (
+        <Checkbox
+          onChange={(e) => {
+            setUrlParams({
+              ...urlParams,
+              is_active: e.target.checked ? undefined : true,
+            });
+          }}
+          defaultChecked={false}
+        >
+          Show Inactive
+        </Checkbox>
+      )}
+      {allowCreate && <Button icon={<PlusOutlined />}>Add</Button>}
+      {allowUploadCsv && <Button icon={<UploadOutlined />}>Upload CSV</Button>}
+      {allowDownloadCsv && (
+        <Button icon={<DownloadOutlined />}>Download CSV</Button>
+      )}
+    </Space>
+  );
 
   return (
     <Space direction="vertical" style={{ width: "100%" }}>
@@ -209,40 +258,7 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
           pageSize: pageSize,
           hideOnSinglePage: true,
         }}
-        title={() => (
-          <Space>
-            {allowSearch && (
-              <Input.Search
-                size="small"
-                placeholder="search..."
-                onSearch={(val) => {
-                  setUrlParams({ ...urlParams, search: val });
-                }}
-                allowClear
-              />
-            )}
-            {allowFilterByIsActive && (
-              <Checkbox
-                onChange={(e) => {
-                  setUrlParams({
-                    ...urlParams,
-                    is_active: e.target.checked ? undefined : true,
-                  });
-                }}
-                defaultChecked={false}
-              >
-                Show Inactive
-              </Checkbox>
-            )}
-            {allowCreate && <Button icon={<PlusOutlined />}>Add</Button>}
-            {allowUploadCsv && (
-              <Button icon={<UploadOutlined />}>Upload CSV</Button>
-            )}
-            {allowDownloadCsv && (
-              <Button icon={<DownloadOutlined />}>Download CSV</Button>
-            )}
-          </Space>
-        )}
+        title={hideTableHeader ? undefined : renderTableHeader}
         onRow={getRowProps}
         onChange={onTableChanged}
         {...tableProps}
@@ -262,9 +278,17 @@ function FiltersForm<FiltersType>(
   return (
     <>
       {filterFormItems && (
-        <Form size="small" layout="inline" {...formProps} onFinish={onSubmit}>
+        <Form
+          size="small"
+          layout="inline"
+          {...formProps}
+          onFinish={onSubmit}
+          wrapperCol={{
+            style: { margin: "4px 0" },
+          }}
+        >
           {filterFormItems}
-          <Form.Item>
+          <Form.Item label=" " colon={false}>
             <Button type="primary" htmlType="submit">
               Apply Filters
             </Button>

@@ -13,6 +13,9 @@ import { ErrorBoundary } from "./components/error-boundary";
 import { DEFAULT_LOGIN_PATH } from "./components/const";
 import { CourseDetail, CourseList } from "./components/course";
 import { UserDetail, UserList } from "./components/user";
+import { LabDetail, LabList } from "./components/lab";
+import { GroupDetail, GroupList } from "./components/group";
+import { SessionDetail, SessionList } from "./components/session";
 
 function App() {
   return (
@@ -27,6 +30,9 @@ function PageRouter(): JSX.Element {
     <BrowserRouter>
       <AuthProvider loginPagePath={DEFAULT_LOGIN_PATH}>
         <Routes>
+          <Route path="login" element={<Login />} />
+          <Route path="404" element={<NotFount404 />} />
+          <Route path="500" element={<InternalServerError500 />} />
           <Route path="" element={<RootPage />}>
             <Route index element={<Navigate to="/home" />} />
             <Route path="home" element={<Home />} />
@@ -39,15 +45,26 @@ function PageRouter(): JSX.Element {
               <Route path=":courseId" element={<CourseDetail />} />
             </Route>
             <Route path="groups">
-              <Route index element={<DummyComponent />} />
-              <Route path=":groupId" element={<DummyComponent />} />
+              <Route index element={<GroupList />} />
+              <Route path=":groupId" element={<GroupDetail />} />
             </Route>
             <Route path="sessions">
-              <Route index element={<DummyComponent />} />
-              <Route path=":sessionId" element={<DummyComponent />} />
+              <Route index element={<SessionList />} />
+              <Route path=":sessionId" element={<SessionDetail />} />
             </Route>
-            <Route path="labs" element={<DummyComponent />} />
-            <Route path="weeks" element={<DummyComponent />} />
+            <Route path="labs">
+              <Route index element={<LabList />} />
+              <Route path=":labId" element={<LabDetail />} />
+            </Route>
+            <Route path="weeks">
+              <Route index element={<DummyComponent />} />
+              <Route path=":weekId" element={<DummyComponent />} />
+            </Route>
+            <Route path="my-student-attendances" element={<DummyComponent />} />
+            <Route path="my-teacher-attendances" element={<DummyComponent />} />
+            <Route path="student-attendances" element={<DummyComponent />} />
+            <Route path="teacher-attendances" element={<DummyComponent />} />
+            <Route path="preferences" element={<DummyComponent />} />
             <Route path="attendance-statistics">
               <Route path="courses" element={<DummyComponent />}>
                 <Route
@@ -77,15 +94,7 @@ function PageRouter(): JSX.Element {
                 <Route path=":userId" element={<DummyComponent />} />
               </Route>
             </Route>
-            <Route path="my-student-attendances" element={<DummyComponent />} />
-            <Route path="my-teacher-attendances" element={<DummyComponent />} />
-            <Route path="student-attendances" element={<DummyComponent />} />
-            <Route path="teacher-attendances" element={<DummyComponent />} />
-            <Route path="preferences" element={<DummyComponent />} />
           </Route>
-          <Route path="login" element={<Login />} />
-          <Route path="404" element={<NotFount404 />} />
-          <Route path="500" element={<InternalServerError500 />} />
           <Route path="*" element={<Navigate to="/404" />} />
         </Routes>
       </AuthProvider>

@@ -35,7 +35,11 @@ export default function HeaderBar(props: {}) {
       <Col>
         <Space>
           <Avatar icon={<UserOutlined />} />
-          <span>{auth.user ? auth.user.display_name : "unknown"}</span>
+          <span>
+            {auth.user
+              ? auth.user.display_name || auth.user.username
+              : "unknown"}
+          </span>
           <Divider type="vertical" />
           <Button type="default" danger onClick={() => auth.logout()}>
             Logout

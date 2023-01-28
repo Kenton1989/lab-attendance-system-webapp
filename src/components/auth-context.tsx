@@ -9,7 +9,7 @@ import React, {
 } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { basicAuth, revokeToken } from "../api/auth";
-import { User } from "../api/rest";
+import { Role, User } from "../api/rest";
 import { getCurrentUser, userHasRole } from "../api";
 import { DEFAULT_404_PATH } from "./const";
 
@@ -38,14 +38,16 @@ export function AuthProvider(
   const navigate = useNavigate();
 
   // If we change page, reset the error state.
-  useEffect(() => {
-    if (error) setError(null);
-  }, [location.pathname]);
+  useEffect(
+    () => {
+      if (error) setError(null);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [location.pathname]
+  );
 
   // Check if there is a currently active session
   // when the provider is mounted for the first time.
-  //
-  // If there is an error, it means there is no session.
   //
   // Finally, just signal the component that the initial load
   // is over.
@@ -192,4 +194,9 @@ export function useAuth(options: UseAuthOptions = {}): {
   }
 
   return { auth, authOk };
+}
+
+export function useHasRole(roles: (string | Role)[]): boolean {
+  const { auth } = useAuth();
+  return useMemo(() => userHasRole(auth.user, roles), [auth.user, roles]);
 }
