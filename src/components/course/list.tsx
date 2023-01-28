@@ -2,7 +2,7 @@ import { Form } from "antd";
 import { ColumnsType } from "antd/es/table";
 import api, { Course, User } from "../../api";
 import { useAuth } from "../auth-context";
-import { SimpleRestApiSelect } from "../form-item";
+import { SimpleRestApiSelect } from "../form-select-item";
 import { useRootPageTitle } from "../root-page-context";
 import { SimpleRestApiTable } from "../table";
 
@@ -11,12 +11,10 @@ const COURSE_COLUMNS: ColumnsType<Course> = [
     title: "Code",
     dataIndex: "code",
     width: "6em",
-    sorter: true,
   },
   {
     title: "Title",
     dataIndex: "title",
-    sorter: true,
   },
 ];
 

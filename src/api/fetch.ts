@@ -84,6 +84,10 @@ export function getHeadersObj(requestInit: RequestInit): Headers {
   return requestInit.headers;
 }
 
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 /**
  * Send and receive data in JSON format
  *
@@ -101,6 +105,8 @@ export async function jsonFetch(
   data?: any,
   options: RequestInit = {}
 ): Promise<any> {
+  await sleep(1000);
+
   let requestInit = options;
 
   let headers = getHeadersObj(requestInit);

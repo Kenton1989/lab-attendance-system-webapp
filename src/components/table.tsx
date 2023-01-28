@@ -3,10 +3,19 @@ import {
   PlusOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
-import { Button, Form, FormProps, Input, Space, Table, TableProps } from "antd";
+import {
+  Button,
+  Checkbox,
+  Form,
+  FormProps,
+  Input,
+  Space,
+  Table,
+  TableProps,
+} from "antd";
 import { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import { FilterValue, SorterResult } from "antd/es/table/interface";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SimpleRestApi, UrlParamSet, RequestOptions } from "../api";
 import { useApiData } from "./backend";
@@ -18,6 +27,7 @@ export type SimpleRestApiTableProps<DataType, FiltersType = any> = {
   api: SimpleRestApi<DataType>;
   columns: ColumnsType<DataType>;
   formatItemPath: (item: DataType) => string;
+  allowFilterByIsActive?: boolean;
   allowSearch?: boolean;
   allowCreate?: boolean;
   allowUploadCsv?: boolean;
@@ -46,8 +56,6 @@ function formatOrderingQuery<DataType>(
     sorter = [sorter];
   }
 
-  console.log(sorter);
-
   return sorter.reduce((pre, s) => {
     if (!s.order) {
       return pre;
@@ -71,6 +79,7 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
     defaultPageSize = DEFAULT_PAGE_SIZE,
     additionalListUrlParams,
     additionalListRequestParams,
+    allowFilterByIsActive = true,
     allowSearch = false,
     allowCreate = false,
     allowUploadCsv = false,
@@ -84,12 +93,20 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
     ...additionalListUrlParams,
     limit: defaultPageSize,
     offset: 0,
+    is_active: true,
   });
+
+  const [pageSize, setPageSize] = useState(defaultPageSize);
+  const [currentPage, setCurrentPage] = useState(1);
+
   const navigate = useNavigate();
 
   const loadData = useCallback(async () => {
     const data = await api.list({
-      urlParams,
+      urlParams: {
+        ...urlParams,
+        ...calLimitOffset(currentPage, pageSize),
+      },
       ...additionalListRequestParams,
     });
 
@@ -100,7 +117,7 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
     }
 
     return data;
-  }, [api, urlParams, additionalListRequestParams]);
+  }, [api, urlParams, additionalListRequestParams, currentPage, pageSize]);
 
   const getRowProps = useCallback(
     (record: DataType) => ({
@@ -119,14 +136,21 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
       filters: Record<string, FilterValue | null>,
       sorter: SorterResult<DataType> | SorterResult<DataType>[]
     ) => {
+      if (pageSize !== pagination.pageSize) {
+        setCurrentPage(1);
+      } else {
+        setCurrentPage(pagination.current!);
+      }
+
+      setPageSize(pagination.pageSize!);
+
       setUrlParams({
         ...urlParams,
-        ...calLimitOffset(pagination.current!, pagination.pageSize!),
         ...filters,
         ordering: formatOrderingQuery(sorter),
       });
     },
-    [urlParams]
+    [urlParams, pageSize]
   );
 
   const onFormSubmitted = useCallback(
@@ -139,6 +163,14 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
     [urlParams]
   );
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [data?.count]);
+
+  const dataLength = data?.results?.length ?? 0;
+  const dataSource =
+    dataLength > pageSize ? data?.results?.slice(0, pageSize) : data?.results;
+
   return (
     <Space direction="vertical" style={{ width: "100%" }}>
       {
@@ -146,18 +178,19 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
           {...formProps}
           filterFormItems={filterFormItems}
           onSubmit={onFormSubmitted}
+          disabled={loading}
         />
       }
       <Table
         loading={loading}
         columns={columns}
-        dataSource={data?.results}
+        dataSource={dataSource}
         rowKey="id"
         size="small"
         pagination={{
           total: data?.count,
-          defaultCurrent: 1,
-          defaultPageSize: defaultPageSize,
+          current: currentPage,
+          pageSize: pageSize,
           hideOnSinglePage: true,
         }}
         title={() => (
@@ -169,7 +202,21 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
                 onSearch={(val) => {
                   setUrlParams({ ...urlParams, search: val });
                 }}
+                allowClear
               />
+            )}
+            {allowFilterByIsActive && (
+              <Checkbox
+                onChange={(e) => {
+                  setUrlParams({
+                    ...urlParams,
+                    is_active: e.target.checked ? undefined : true,
+                  });
+                }}
+                defaultChecked={false}
+              >
+                Show Inactive
+              </Checkbox>
             )}
             {allowCreate && <Button icon={<PlusOutlined />}>Add</Button>}
             {allowUploadCsv && (

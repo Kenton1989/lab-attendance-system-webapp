@@ -97,6 +97,7 @@ export function SimpleRestApiSelect<DataType>(
       notFoundContent={loading ? <Spin size="small" /> : null}
       options={data?.options}
       showSearch
+      allowClear
       onSearch={debounceUpdateSearch}
     />
   );
