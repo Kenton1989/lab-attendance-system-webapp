@@ -1,4 +1,4 @@
-import { Select, SelectProps, Spin } from "antd";
+import { Empty, Select, SelectProps, Spin } from "antd";
 import { LabeledValue } from "antd/es/select";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import api, {
@@ -20,7 +20,8 @@ import debounce from "lodash/debounce";
 import { useApiData } from "./backend";
 
 function getId(val: any) {
-  if (typeof val !== "object") return val;
+  if (typeof val !== "object")
+    throw new TypeError("expecting an object but got a " + typeof val);
   return val.id;
 }
 
@@ -59,7 +60,6 @@ export function SimpleRestApiSelect<DataType>(
   const makeOptions = useCallback(
     (list?: DataType[]): LabeledValue[] => {
       if (!list) return [];
-
       return list.map((val) => ({
         label: formatLabel(val),
         value: formatValue(val),
@@ -86,6 +86,10 @@ export function SimpleRestApiSelect<DataType>(
     return { resp: data, options: makeOptions(data.results) };
   }, [api, urlParams, additionalListRequestParams, makeOptions, search]);
 
+  const { data, loading } = useApiData(loadData);
+
+  const [delayLoading, setDelayLoading] = useState(false);
+
   const debounceUpdateSearch = useMemo(
     () =>
       debounce((val) => {
@@ -94,21 +98,36 @@ export function SimpleRestApiSelect<DataType>(
     [searchDelayMs]
   );
 
-  useEffect(() => {
-    return debounceUpdateSearch.cancel();
-  }, [debounceUpdateSearch]);
+  const onSearch = useCallback(
+    (val: string) => {
+      setDelayLoading(true);
+      debounceUpdateSearch(val);
+    },
+    [debounceUpdateSearch]
+  );
 
-  const { data, loading } = useApiData(loadData);
+  useEffect(() => {
+    // when loading finally happens, reset the delayLoading to false
+    if (loading) {
+      setDelayLoading(false);
+    }
+
+    // clean the pending call
+    return debounceUpdateSearch.cancel();
+  }, [loading, debounceUpdateSearch]);
+
+  const hideOptions = loading || delayLoading;
 
   return (
     <Select
       {...selectProps}
       filterOption={false}
-      notFoundContent={loading ? <Spin size="small" /> : null}
-      options={data?.options}
+      notFoundContent={hideOptions ? <Spin size="small" /> : <Empty />}
+      options={hideOptions ? [] : data?.options}
+      loading={hideOptions}
       showSearch
       allowClear
-      onSearch={debounceUpdateSearch}
+      onSearch={onSearch}
     />
   );
 }

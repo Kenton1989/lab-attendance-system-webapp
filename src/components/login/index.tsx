@@ -60,6 +60,7 @@ export default function Login(props: {
           wrapperCol={{ span: 16 }}
           onFinish={onFinish}
           autoComplete="off"
+          disabled={auth.loading}
         >
           <Form.Item
             label="Username"
@@ -79,7 +80,7 @@ export default function Login(props: {
 
           <Form.Item>
             <Button type="primary" htmlType="submit">
-              Submit
+              Login
             </Button>
           </Form.Item>
         </Form>

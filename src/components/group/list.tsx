@@ -6,7 +6,7 @@ import { CourseSelect, LabSelect, UserSelect } from "../form-select-item";
 import { useRootPageTitle } from "../root-page-context";
 import { SimpleRestApiTable } from "../table";
 
-const GROUP_COLUMNS: ColumnsType<Group> = [
+export const GROUP_COLUMNS: ColumnsType<Group> = [
   {
     title: "Course",
     dataIndex: ["course", "code"],

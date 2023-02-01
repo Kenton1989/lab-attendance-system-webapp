@@ -1,12 +1,12 @@
 import { Form } from "antd";
 import { ColumnsType } from "antd/es/table";
-import api, { Lab, User } from "../../api";
+import api, { Lab } from "../../api";
 import { useAuth, useHasRole } from "../auth-context";
 import { UserSelect } from "../form-select-item";
 import { useRootPageTitle } from "../root-page-context";
 import { SimpleRestApiTable } from "../table";
 
-const LAB_COLUMNS: ColumnsType<Lab> = [
+export const LAB_COLUMNS: ColumnsType<Lab> = [
   {
     title: "Username",
     dataIndex: "username",

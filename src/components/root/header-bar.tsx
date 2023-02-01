@@ -41,7 +41,12 @@ export default function HeaderBar(props: {}) {
               : "unknown"}
           </span>
           <Divider type="vertical" />
-          <Button type="default" danger onClick={() => auth.logout()}>
+          <Button
+            type="default"
+            danger
+            onClick={() => auth.logout()}
+            disabled={auth.loading}
+          >
             Logout
           </Button>
         </Space>

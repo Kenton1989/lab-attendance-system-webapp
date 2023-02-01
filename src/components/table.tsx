@@ -12,6 +12,7 @@ import {
   Space,
   Table,
   TableProps,
+  Typography,
 } from "antd";
 import { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import { FilterValue, SorterResult } from "antd/es/table/interface";
@@ -37,6 +38,7 @@ export type SimpleRestApiTableProps<DataType, FiltersType = any> = {
   columns: ColumnsType<DataType>;
   formatItemPath: (item: DataType) => string;
   onDataLoaded?: (data: PaginatedListResponse<DataType>) => unknown;
+  title?: string;
   hideTableHeader?: boolean;
   allowFilterByIsActive?: boolean;
   allowSearch?: boolean;
@@ -52,6 +54,7 @@ export type SimpleRestApiTableProps<DataType, FiltersType = any> = {
   filterFormItems?: React.ReactNode;
   filterFormProps?: FormProps<FiltersType>;
   filterFormToParams?: (val: FiltersType) => UrlParamSet<DataType>;
+  hideIfEmpty?: boolean;
 };
 
 function calLimitOffset(page: number, pageSize: number) {
@@ -88,6 +91,7 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
     api,
     columns,
     formatItemPath,
+    title,
     onDataLoaded = doNothing,
     defaultPageSize = DEFAULT_PAGE_SIZE,
     additionalListUrlParams,
@@ -102,6 +106,7 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
     filterFormProps,
     filterFormItems,
     filterFormToParams = identity,
+    hideIfEmpty = false,
   } = props;
 
   // pagination states
@@ -190,6 +195,7 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
   // add filter params to urlParams when the filter form are submitted
   const onFormSubmitted = useCallback(
     (val: FiltersType) => {
+      console.log(val);
       // reset page to 1 to avoid invalid page number
       setCurrentPage(1);
       setUrlParams({
@@ -205,6 +211,7 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
     setCurrentPage(1);
   }, [data?.count]);
 
+  // cut the data to fit the page size
   const dataLength = data?.results?.length ?? 0;
   const dataSource =
     dataLength > pageSize ? data?.results?.slice(0, pageSize) : data?.results;
@@ -242,34 +249,39 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
     </Space>
   );
 
+  const showTable = !(hideIfEmpty && dataLength === 0);
+
   return (
-    <Space direction="vertical" style={{ width: "100%" }}>
-      {
-        <FiltersForm
-          {...filterFormProps}
-          filterFormItems={filterFormItems}
-          onSubmit={onFormSubmitted}
-          disabled={loading}
-        />
-      }
-      <Table
-        loading={loading}
-        columns={columns}
-        dataSource={dataSource}
-        rowKey="id"
-        size="small"
-        pagination={{
-          total: data?.count,
-          current: currentPage,
-          pageSize: pageSize,
-          hideOnSinglePage: true,
-        }}
-        title={hideTableHeader ? undefined : renderTableHeader}
-        onRow={getRowProps}
-        onChange={onTableChanged}
-        {...tableProps}
-      />
-    </Space>
+    <>
+      {showTable && (
+        <Space direction="vertical" style={{ width: "100%" }}>
+          <Typography.Title level={5}>{title}</Typography.Title>
+          <FiltersForm
+            {...filterFormProps}
+            filterFormItems={filterFormItems}
+            onSubmit={onFormSubmitted}
+            disabled={loading}
+          />
+          <Table
+            loading={loading}
+            columns={columns}
+            dataSource={dataSource}
+            rowKey="id"
+            size="small"
+            pagination={{
+              total: data?.count,
+              current: currentPage,
+              pageSize: pageSize,
+              hideOnSinglePage: true,
+            }}
+            title={hideTableHeader ? undefined : renderTableHeader}
+            onRow={getRowProps}
+            onChange={onTableChanged}
+            {...tableProps}
+          />
+        </Space>
+      )}
+    </>
   );
 }
 

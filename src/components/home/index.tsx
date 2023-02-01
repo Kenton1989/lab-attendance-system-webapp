@@ -1,34 +1,59 @@
-import useMessage from "antd/es/message/useMessage";
+import { Descriptions, Divider, Space } from "antd";
+import api from "../../api";
 import { useAuth } from "../auth-context";
+import { COURSE_COLUMNS } from "../course/list";
+import { GROUP_COLUMNS } from "../group/list";
+import { LAB_COLUMNS } from "../lab/list";
 import { useRootPageTitle } from "../root-page-context";
+import { SimpleRestApiTable } from "../table";
 
 export function Home(props: {}) {
   const { auth, authOk } = useAuth({ loginRequired: true });
-  const [message, msgCtx] = useMessage();
   useRootPageTitle("home");
-
-  const haha = () => {
-    message.open({
-      type: "info",
-      content: "haha",
-    });
-  };
 
   return (
     <>
       {authOk && (
-        <>
-          {msgCtx}
-          <h1>Home</h1>
-          <p>Hello, {auth.user?.display_name}</p>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui sequi
-            minima molestiae expedita vel, distinctio voluptatibus, modi
-            consectetur cumque ex rem, voluptates ratione quibusdam assumenda
-            laborum doloribus. Eius, incidunt facilis.
-          </p>
-          <button onClick={haha}>Haha</button>
-        </>
+        <Space direction="vertical" style={{ width: "100%" }} size={32}>
+          <Descriptions title="User Info">
+            <Descriptions.Item label="Username">
+              {auth.user?.username}
+            </Descriptions.Item>
+            <Descriptions.Item label="Display Name">
+              {auth.user?.display_name}
+            </Descriptions.Item>
+            <Descriptions.Item label="Email">
+              {auth.user?.email}
+            </Descriptions.Item>
+          </Descriptions>
+
+          <SimpleRestApiTable
+            title="Managed Courses"
+            api={api.my_managed_course}
+            formatItemPath={(item) => `/courses/${item.id}`}
+            columns={COURSE_COLUMNS}
+            hideTableHeader
+            hideIfEmpty
+          />
+
+          <SimpleRestApiTable
+            title="Managed Groups"
+            api={api.my_managed_group}
+            formatItemPath={(item) => `/groups/${item.id}`}
+            columns={GROUP_COLUMNS}
+            hideTableHeader
+            hideIfEmpty
+          />
+
+          <SimpleRestApiTable
+            title="Managed Labs"
+            api={api.my_managed_lab}
+            formatItemPath={(item) => `/labs/${item.id}`}
+            columns={LAB_COLUMNS}
+            hideTableHeader
+            hideIfEmpty
+          />
+        </Space>
       )}
     </>
   );

@@ -6,7 +6,7 @@ import { UserSelect } from "../form-select-item";
 import { useRootPageTitle } from "../root-page-context";
 import { SimpleRestApiTable } from "../table";
 
-const COURSE_COLUMNS: ColumnsType<Course> = [
+export const COURSE_COLUMNS: ColumnsType<Course> = [
   {
     title: "Code",
     dataIndex: "code",
@@ -28,6 +28,7 @@ export function CourseList(props: {}) {
 
   return (
     <SimpleRestApiTable
+      title="Courses"
       api={api.course}
       formatItemPath={({ id }) => `/courses/${id}`}
       columns={COURSE_COLUMNS}

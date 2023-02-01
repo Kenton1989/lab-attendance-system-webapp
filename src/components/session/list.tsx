@@ -1,6 +1,6 @@
 import { Form, Tag } from "antd";
 import { ColumnsType } from "antd/es/table";
-import api, { Session, Week } from "../../api";
+import api, { Session } from "../../api";
 import { useAuth, useHasRole } from "../auth-context";
 import { GroupSelect, LabSelect, WeekSelect } from "../form-select-item";
 import { useRootPageTitle } from "../root-page-context";

@@ -66,6 +66,7 @@ function PageRouter(): JSX.Element {
             <Route path="teacher-attendances" element={<DummyComponent />} />
             <Route path="preferences" element={<DummyComponent />} />
             <Route path="attendance-statistics">
+              <Route index element={<DummyComponent />} />
               <Route path="courses" element={<DummyComponent />}>
                 <Route
                   index
