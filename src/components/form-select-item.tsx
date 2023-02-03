@@ -52,7 +52,6 @@ export function SimpleRestApiSelect<DataType>(
   const [search, setSearch] = useState("");
 
   const [urlParams] = useState<UrlParamSet<DataType>>({
-    ...additionalListUrlParams,
     limit: listSize,
     offset: 0,
   });
@@ -71,6 +70,7 @@ export function SimpleRestApiSelect<DataType>(
   const loadData = useCallback(async () => {
     const data = await api.list({
       urlParams: {
+        ...additionalListUrlParams,
         ...urlParams,
         search,
       },
@@ -84,7 +84,14 @@ export function SimpleRestApiSelect<DataType>(
     }
 
     return { resp: data, options: makeOptions(data.results) };
-  }, [api, urlParams, additionalListRequestParams, makeOptions, search]);
+  }, [
+    api,
+    urlParams,
+    additionalListUrlParams,
+    additionalListRequestParams,
+    makeOptions,
+    search,
+  ]);
 
   const { data, loading } = useApiData(loadData);
 
@@ -122,7 +129,13 @@ export function SimpleRestApiSelect<DataType>(
     <Select
       {...selectProps}
       filterOption={false}
-      notFoundContent={hideOptions ? <Spin size="small" /> : <Empty />}
+      notFoundContent={
+        hideOptions ? (
+          <Spin size="small" />
+        ) : (
+          <Empty style={{ maxWidth: "100%" }} />
+        )
+      }
       options={hideOptions ? [] : data?.options}
       loading={hideOptions}
       showSearch

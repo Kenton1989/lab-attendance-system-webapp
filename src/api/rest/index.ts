@@ -31,10 +31,10 @@ export class Api {
     "/users/me/teacher_attendances"
   );
   my_student_attendance_course_options = new SimpleRestApi<Course>(
-    "/users/me/student_attendance/course_options"
+    "/users/me/student_attendances/course_options"
   );
   my_teacher_attendance_course_options = new SimpleRestApi<Course>(
-    "/users/me/teacher_attendance/course_options"
+    "/users/me/teacher_attendances/course_options"
   );
   lab = new SimpleRestApi<Lab>("/labs");
   course = new SimpleRestApi<Course>("/courses");

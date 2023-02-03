@@ -87,21 +87,22 @@ export type StudentMakeUpSession = {
   make_up_session_id?: number;
 };
 
-type Attendance = {
+type BaseAttendance = {
   id?: number;
   session?: Session;
   session_id?: number;
   attender?: User;
   attender_id?: number;
-  check_in_state?: string;
+  check_in_state?: "attend" | "absent" | "late";
   check_in_datetime?: string;
   last_modify?: string;
   remark?: string;
   is_active?: boolean;
 };
 
-export type StudentAttendance = Attendance;
-export type TeacherAttendance = Attendance;
+export type StudentAttendance = BaseAttendance;
+export type TeacherAttendance = BaseAttendance;
+export type Attendance = StudentAttendance | TeacherAttendance;
 
 type AttendanceStatistics = {
   course?: Course;

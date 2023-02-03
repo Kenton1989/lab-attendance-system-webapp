@@ -1,4 +1,4 @@
-import { Descriptions, Divider, Space } from "antd";
+import { Descriptions, Space } from "antd";
 import api from "../../api";
 import { useAuth } from "../auth-context";
 import { COURSE_COLUMNS } from "../course/list";
@@ -28,6 +28,15 @@ export function Home(props: {}) {
           </Descriptions>
 
           <SimpleRestApiTable
+            title="Managed Labs"
+            api={api.my_managed_lab}
+            formatItemPath={(item) => `/labs/${item.id}`}
+            columns={LAB_COLUMNS}
+            hideTableHeader
+            hideIfEmpty
+          />
+
+          <SimpleRestApiTable
             title="Managed Courses"
             api={api.my_managed_course}
             formatItemPath={(item) => `/courses/${item.id}`}
@@ -41,15 +50,6 @@ export function Home(props: {}) {
             api={api.my_managed_group}
             formatItemPath={(item) => `/groups/${item.id}`}
             columns={GROUP_COLUMNS}
-            hideTableHeader
-            hideIfEmpty
-          />
-
-          <SimpleRestApiTable
-            title="Managed Labs"
-            api={api.my_managed_lab}
-            formatItemPath={(item) => `/labs/${item.id}`}
-            columns={LAB_COLUMNS}
             hideTableHeader
             hideIfEmpty
           />

@@ -35,7 +35,7 @@ function identity(val: any) {
 
 export type SimpleRestApiTableProps<DataType, FiltersType = any> = {
   api: SimpleRestApi<DataType>;
-  columns: ColumnsType<DataType>;
+  columns?: ColumnsType<DataType>;
   formatItemPath: (item: DataType) => string;
   onDataLoaded?: (data: PaginatedListResponse<DataType>) => unknown;
   title?: string;
@@ -195,7 +195,6 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
   // add filter params to urlParams when the filter form are submitted
   const onFormSubmitted = useCallback(
     (val: FiltersType) => {
-      console.log(val);
       // reset page to 1 to avoid invalid page number
       setCurrentPage(1);
       setUrlParams({

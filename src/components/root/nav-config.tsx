@@ -63,7 +63,7 @@ const CONFIG: NavConfig = {
     makeItem("Attendances", "/student-attendances", <CarryOutOutlined />, [
       "staff",
     ]),
-    makeItem("TA Attendances", "/teacher-attendances", <CarryOutOutlined />, [
+    makeItem("Attendances (TA)", "/teacher-attendances", <CarryOutOutlined />, [
       "staff",
     ]),
     makeItem("Users", "/users", <UserOutlined />, []),
@@ -79,7 +79,7 @@ const CONFIG: NavConfig = {
       ["student"]
     ),
     makeItem(
-      "My TA Attendances",
+      "My Attendances (TA)",
       "/my-teacher-attendances",
       <CarryOutOutlined />,
       ["teacher"]

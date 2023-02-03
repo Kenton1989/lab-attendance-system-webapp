@@ -16,6 +16,13 @@ import { UserDetail, UserList } from "./components/user";
 import { LabDetail, LabList } from "./components/lab";
 import { GroupDetail, GroupList } from "./components/group";
 import { SessionDetail, SessionList } from "./components/session";
+import { WeekDetail, WeekList } from "./components/week";
+import {
+  MyStudentAttendance,
+  MyTeacherAttendance,
+  StudentAttendance,
+  TeacherAttendance,
+} from "./components/attendance";
 
 function App() {
   return (
@@ -57,13 +64,25 @@ function PageRouter(): JSX.Element {
               <Route path=":labId" element={<LabDetail />} />
             </Route>
             <Route path="weeks">
-              <Route index element={<DummyComponent />} />
-              <Route path=":weekId" element={<DummyComponent />} />
+              <Route index element={<WeekList />} />
+              <Route path=":weekId" element={<WeekDetail />} />
             </Route>
-            <Route path="my-student-attendances" element={<DummyComponent />} />
-            <Route path="my-teacher-attendances" element={<DummyComponent />} />
-            <Route path="student-attendances" element={<DummyComponent />} />
-            <Route path="teacher-attendances" element={<DummyComponent />} />
+            <Route path="student-attendances">
+              <Route index element={<StudentAttendance />} />
+              <Route path=":attendanceId" element={<DummyComponent />} />
+            </Route>
+            <Route path="teacher-attendances">
+              <Route index element={<TeacherAttendance />} />
+              <Route path=":attendanceId" element={<DummyComponent />} />
+            </Route>
+            <Route
+              path="my-student-attendances"
+              element={<MyStudentAttendance />}
+            />
+            <Route
+              path="my-teacher-attendances"
+              element={<MyTeacherAttendance />}
+            />
             <Route path="preferences" element={<DummyComponent />} />
             <Route path="attendance-statistics">
               <Route index element={<DummyComponent />} />

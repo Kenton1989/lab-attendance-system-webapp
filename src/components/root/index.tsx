@@ -9,7 +9,7 @@ import { useAuth } from "../auth-context";
 const { Header, Sider, Content, Footer } = Layout;
 
 export default function RootPage() {
-  const { auth } = useAuth();
+  const { auth } = useAuth({ loginRequired: true });
 
   return (
     <RootPageContextProvider>

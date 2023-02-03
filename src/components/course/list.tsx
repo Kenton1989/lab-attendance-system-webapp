@@ -28,7 +28,6 @@ export function CourseList(props: {}) {
 
   return (
     <SimpleRestApiTable
-      title="Courses"
       api={api.course}
       formatItemPath={({ id }) => `/courses/${id}`}
       columns={COURSE_COLUMNS}
