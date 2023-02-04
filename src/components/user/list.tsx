@@ -2,7 +2,7 @@ import { Form } from "antd";
 import { ColumnsType } from "antd/es/table";
 import api, { User } from "../../api";
 import { useAuth, useHasRole } from "../auth-context";
-import { RoleSelect } from "../form-select-item";
+import { RoleSelect } from "../form";
 import { useRootPageTitle } from "../root-page-context";
 import { SimpleRestApiTable } from "../table";
 

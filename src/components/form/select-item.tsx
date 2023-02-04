@@ -11,19 +11,21 @@ import api, {
   UrlParamSet,
   User,
   Week,
-} from "../api";
+} from "../../api";
 import {
   DEFAULT_SELECT_LIST_SIZE,
   DEFAULT_SELECT_SEARCH_DELAY_MS,
-} from "./const";
+} from "../const";
 import debounce from "lodash/debounce";
-import { useApiData } from "./backend";
+import { useApiData } from "../backend";
 
 function getId(val: any) {
   if (typeof val !== "object")
     throw new TypeError("expecting an object but got a " + typeof val);
   return val.id;
 }
+
+const EMPTY: any[] = [];
 
 export type SimpleRestApiSelectProps<DataType> = {
   api: SimpleRestApi<DataType>;
@@ -33,6 +35,7 @@ export type SimpleRestApiSelectProps<DataType> = {
   additionalListUrlParams?: UrlParamSet<DataType>;
   additionalListRequestParams?: RequestOptions<DataType>;
   searchDelayMs?: number;
+  persistDataOptions?: DataType[];
 } & SelectProps;
 
 export function SimpleRestApiSelect<DataType>(
@@ -46,6 +49,7 @@ export function SimpleRestApiSelect<DataType>(
     additionalListRequestParams,
     listSize = DEFAULT_SELECT_LIST_SIZE,
     searchDelayMs = DEFAULT_SELECT_SEARCH_DELAY_MS,
+    persistDataOptions = EMPTY,
     ...selectProps
   } = props;
 
@@ -83,12 +87,20 @@ export function SimpleRestApiSelect<DataType>(
       );
     }
 
-    return { resp: data, options: makeOptions(data.results) };
+    const persistOptions = makeOptions(persistDataOptions);
+    const persistValues = persistOptions.map(({ value }) => value);
+    const queriedOptions = makeOptions(data.results).filter(
+      ({ value }) => !persistValues.includes(value)
+    );
+    const options = [...persistOptions, ...queriedOptions];
+
+    return { options };
   }, [
     api,
     urlParams,
     additionalListUrlParams,
     additionalListRequestParams,
+    persistDataOptions,
     makeOptions,
     search,
   ]);
@@ -114,30 +126,30 @@ export function SimpleRestApiSelect<DataType>(
   );
 
   useEffect(() => {
-    // when loading finally happens, reset the delayLoading to false
-    if (loading) {
+    // reset the delayLoading to false when loading finally happens or search is cleared
+    if (!search || loading) {
       setDelayLoading(false);
     }
 
     // clean the pending call
     return debounceUpdateSearch.cancel();
-  }, [loading, debounceUpdateSearch]);
+  }, [search, loading, debounceUpdateSearch]);
 
-  const hideOptions = loading || delayLoading;
+  const loadingOptions = loading || delayLoading;
 
   return (
     <Select
       {...selectProps}
       filterOption={false}
       notFoundContent={
-        hideOptions ? (
+        loadingOptions ? (
           <Spin size="small" />
         ) : (
           <Empty style={{ maxWidth: "100%" }} />
         )
       }
-      options={hideOptions ? [] : data?.options}
-      loading={hideOptions}
+      options={loadingOptions ? [] : data?.options}
+      loading={loadingOptions}
       showSearch
       allowClear
       onSearch={onSearch}

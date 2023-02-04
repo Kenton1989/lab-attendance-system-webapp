@@ -105,7 +105,7 @@ export async function jsonFetch(
   data?: any,
   options: RequestInit = {}
 ): Promise<any> {
-  await sleep(1000);
+  // await sleep(500);
 
   let requestInit = options;
 

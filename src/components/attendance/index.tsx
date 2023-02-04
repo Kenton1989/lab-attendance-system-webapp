@@ -2,12 +2,7 @@ import { Form, Select } from "antd";
 import { LabeledValue } from "antd/es/select";
 import { useState } from "react";
 import api, { Course, Group, SimpleRestApi, UrlParamSet } from "../../api";
-import {
-  CourseSelect,
-  GroupSelect,
-  UserSelect,
-  WeekSelect,
-} from "../form-select-item";
+import { CourseSelect, GroupSelect, UserSelect, WeekSelect } from "../form";
 import { BaseAttendancePage } from "./base";
 
 export { BaseAttendancePage } from "./base";
@@ -51,7 +46,11 @@ function AttendanceFilterItems() {
         <WeekSelect />
       </Form.Item>
       <Form.Item label="State" name="check_in_state">
-        <Select options={CHECK_IN_STATE_OPTIONS} style={{ minWidth: "8em" }} />
+        <Select
+          options={CHECK_IN_STATE_OPTIONS}
+          allowClear
+          style={{ minWidth: "8em" }}
+        />
       </Form.Item>
     </>
   );
@@ -95,7 +94,11 @@ function MyAttendanceFilterItems(props: {
         <WeekSelect />
       </Form.Item>
       <Form.Item label="State" name="check_in_state">
-        <Select options={CHECK_IN_STATE_OPTIONS} style={{ minWidth: "8em" }} />
+        <Select
+          options={CHECK_IN_STATE_OPTIONS}
+          allowClear
+          style={{ minWidth: "8em" }}
+        />
       </Form.Item>
     </>
   );

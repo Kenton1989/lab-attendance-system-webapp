@@ -2,11 +2,11 @@ import { Form, Tag } from "antd";
 import { ColumnsType } from "antd/es/table";
 import api, { Session } from "../../api";
 import { useAuth, useHasRole } from "../auth-context";
-import { GroupSelect, LabSelect, WeekSelect } from "../form-select-item";
+import { GroupSelect, LabSelect, WeekSelect } from "../form";
 import { useRootPageTitle } from "../root-page-context";
 import { SimpleRestApiTable } from "../table";
 
-const SESSION_COLUMNS: ColumnsType<Session> = [
+export const SESSION_COLUMNS: ColumnsType<Session> = [
   {
     title: "Course",
     dataIndex: ["group", "course", "code"],

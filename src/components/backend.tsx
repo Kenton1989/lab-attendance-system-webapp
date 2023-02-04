@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Http4xxError } from "../api/fetch";
 import { useAuth } from "./auth-context";
 import { StatusCodes } from "http-status-codes";
@@ -12,6 +12,7 @@ type UseApiLoaderOptions = {
 
 type UseApiLoaderResult<T> = {
   loading: boolean;
+  reload: () => Promise<void>;
   data?: T;
   error?: any;
 };
@@ -44,31 +45,34 @@ export function useApiData<T>(
     onError: onOtherError = throwError,
   } = options;
 
-  useEffect(() => {
-    const performLoadData = async () => {
-      setLoading(true);
-      try {
-        const data = await dataLoader();
-        setData(data);
-      } catch (e) {
-        console.error(e);
-        setError(e);
+  const performLoadData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await dataLoader();
+      setData(data);
+    } catch (e) {
+      console.error(e);
+      setError(e);
 
-        if (!(e instanceof Http4xxError)) {
-          onOtherError(e);
-          throw e;
-        }
-
-        const path = redirectOn4xx[e.status];
-        if (path) navigate(path);
-        else onOtherError(e);
-      } finally {
-        setLoading(false);
+      if (!(e instanceof Http4xxError)) {
+        onOtherError(e);
+        throw e;
       }
-    };
 
-    performLoadData();
+      const path = redirectOn4xx[e.status];
+      if (path) navigate(path);
+      else onOtherError(e);
+    } finally {
+      setLoading(false);
+    }
   }, [dataLoader, navigate, redirectOn4xx, onOtherError]);
 
-  return useMemo(() => ({ data, loading, error }), [data, loading, error]);
+  useEffect(() => {
+    performLoadData();
+  }, [performLoadData]);
+
+  return useMemo(
+    () => ({ data, loading, error, reload: performLoadData }),
+    [data, loading, error, performLoadData]
+  );
 }

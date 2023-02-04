@@ -1,4 +1,6 @@
+import { StatusCodes } from "http-status-codes";
 import { authJsonFetch } from "../auth";
+import { Http4xxError } from "../fetch";
 import { getUrl } from "../url";
 import { PreferenceSet } from "./model";
 
@@ -32,6 +34,10 @@ function createUrlParamObj(params?: UrlParamSet<any>): URLSearchParams {
 export type RequestOptions<DataType> = {
   urlParams?: UrlParamSet<DataType>;
 } & RequestInit;
+
+export type CanUpdateRequestOptions<DataType> = {
+  emptyPatch?: any;
+} & RequestOptions<DataType>;
 
 export type PaginatedListResponse<T> = {
   count?: number;
@@ -107,6 +113,29 @@ export class SimpleRestApi<DataType, IdType = number | string> {
       method: "PATCH",
       ...others,
     });
+  }
+
+  // test if user has update permission by sending an empty patch
+  async canUpdate(
+    id: IdType,
+    options: CanUpdateRequestOptions<DataType> = {}
+  ): Promise<boolean> {
+    let { urlParams, emptyPatch = {}, ...others } = options;
+
+    let param = createUrlParamObj(urlParams);
+
+    try {
+      await authJsonFetch(`${this.urlBase}/${id}?${param}`, emptyPatch, {
+        method: "PATCH",
+        ...others,
+      });
+    } catch (e) {
+      if (e instanceof Http4xxError && e.status === StatusCodes.FORBIDDEN) {
+        return false;
+      }
+      throw e;
+    }
+    return true;
   }
 
   async destroy(

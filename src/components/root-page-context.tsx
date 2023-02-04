@@ -38,14 +38,24 @@ export function useRootPage() {
   return useContext(RootPageContext);
 }
 
-export function useRootPageTitle(title: string | string[]) {
-  const { setTitle } = useRootPage();
+export function useRootPageTitle(newTitle: string | string[]) {
+  const { title, setTitle } = useRootPage();
 
   useEffect(() => {
-    if (Array.isArray(title)) {
-      setTitle(title);
+    let newTitleArr: string[];
+    if (Array.isArray(newTitle)) {
+      newTitleArr = newTitle;
     } else {
-      setTitle([title]);
+      newTitleArr = [newTitle];
     }
-  }, [title, setTitle]);
+
+    if (
+      newTitleArr.length === title.length &&
+      newTitleArr.every((v, i) => v === title[i])
+    ) {
+      return;
+    }
+
+    setTitle(newTitleArr);
+  }, [title, newTitle, setTitle]);
 }

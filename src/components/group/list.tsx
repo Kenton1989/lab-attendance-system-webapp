@@ -2,7 +2,7 @@ import { Form } from "antd";
 import { ColumnsType } from "antd/es/table";
 import api, { Group } from "../../api";
 import { useAuth, useHasRole } from "../auth-context";
-import { CourseSelect, LabSelect, UserSelect } from "../form-select-item";
+import { CourseSelect, LabSelect, UserSelect } from "../form";
 import { useRootPageTitle } from "../root-page-context";
 import { SimpleRestApiTable } from "../table";
 
@@ -13,7 +13,7 @@ export const GROUP_COLUMNS: ColumnsType<Group> = [
     width: "6em",
   },
   {
-    title: "Name",
+    title: "Group",
     dataIndex: "name",
   },
   {
