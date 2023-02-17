@@ -44,7 +44,9 @@ export default function HeaderBar(props: {}) {
           <Button
             type="default"
             danger
-            onClick={() => auth.logout()}
+            onClick={() => {
+              auth.logout(auth.loginPagePath);
+            }}
             disabled={auth.loading}
           >
             Logout

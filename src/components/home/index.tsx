@@ -1,4 +1,5 @@
-import { Descriptions, Space } from "antd";
+import { Button, Descriptions, Space } from "antd";
+import { useNavigate } from "react-router-dom";
 import api from "../../api";
 import { useAuth } from "../auth-context";
 import { COURSE_COLUMNS } from "../course/list";
@@ -7,9 +8,12 @@ import { LAB_COLUMNS } from "../lab/list";
 import { useRootPageTitle } from "../root-page-context";
 import { SimpleRestApiTable } from "../table";
 
+const CHANGE_PASSWORD_URL = "/users/me/password";
+
 export function Home(props: {}) {
   const { auth, authOk } = useAuth({ loginRequired: true });
   useRootPageTitle("home");
+  const navigate = useNavigate();
 
   return (
     <>
@@ -24,6 +28,14 @@ export function Home(props: {}) {
             </Descriptions.Item>
             <Descriptions.Item label="Email">
               {auth.user?.email}
+            </Descriptions.Item>
+            <Descriptions.Item label="Password">
+              <Button
+                size="small"
+                onClick={() => navigate(CHANGE_PASSWORD_URL)}
+              >
+                Change Password
+              </Button>
             </Descriptions.Item>
           </Descriptions>
 

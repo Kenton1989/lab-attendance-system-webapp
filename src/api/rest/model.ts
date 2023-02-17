@@ -9,8 +9,9 @@ export type User = {
   password?: string;
   email?: string;
   display_name?: string;
-  is_active?: boolean;
   roles?: Array<Role>;
+  role_ids?: Array<number>;
+  is_active?: boolean;
 };
 
 export type Week = {

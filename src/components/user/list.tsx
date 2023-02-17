@@ -6,7 +6,7 @@ import { RoleSelect } from "../form";
 import { useRootPageTitle } from "../root-page-context";
 import { SimpleRestApiTable } from "../table";
 
-const USER_COLUMNS: ColumnsType<User> = [
+export const USER_COLUMNS: ColumnsType<User> = [
   {
     title: "Username",
     dataIndex: "username",

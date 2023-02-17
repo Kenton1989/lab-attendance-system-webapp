@@ -3,6 +3,7 @@ import {
   CalendarOutlined,
   CarryOutOutlined,
   DatabaseOutlined,
+  ExperimentOutlined,
   HomeOutlined,
   SettingOutlined,
   UserOutlined,
@@ -58,29 +59,30 @@ const CONFIG: NavConfig = {
   tabItems: [
     makeItem("Home", "/home", <HomeOutlined />, undefined),
     makeItem("Courses", "/courses", <DatabaseOutlined />, ["staff"]),
-    makeItem("Groups", "/groups", <DatabaseOutlined />, []),
-    makeItem("Sessions", "/sessions", <DatabaseOutlined />, []),
-    makeItem("Attendances", "/student-attendances", <CarryOutOutlined />, [
+    makeItem("Groups", "/groups", <DatabaseOutlined />, ["staff"]),
+    makeItem("Sessions", "/sessions", <DatabaseOutlined />, ["staff"]),
+    makeItem("Attendances", "/student_attendances", <CarryOutOutlined />, [
       "staff",
     ]),
-    makeItem("Attendances (TA)", "/teacher-attendances", <CarryOutOutlined />, [
+    makeItem("Attendances (TA)", "/teacher_attendances", <CarryOutOutlined />, [
       "staff",
     ]),
-    makeItem("Users", "/users", <UserOutlined />, []),
-    makeItem("Weeks", "/weeks", <CalendarOutlined />, []),
-    makeItem("Statistics", "/attendance-statistics", <BarChartOutlined />, [
+    makeItem("Labs", "/labs", <ExperimentOutlined />, ["staff"]),
+    makeItem("Users", "/users", <UserOutlined />, ["staff"]),
+    makeItem("Weeks", "/weeks", <CalendarOutlined />, ["staff"]),
+    makeItem("Statistics", "/attendance_statistics", <BarChartOutlined />, [
       "staff",
     ]),
     makeItem("Preferences", "/preferences", <SettingOutlined />, []),
     makeItem(
       "My Attendances",
-      "/my-student-attendances",
+      "/my_student_attendances",
       <CarryOutOutlined />,
       ["student"]
     ),
     makeItem(
       "My Attendances (TA)",
-      "/my-teacher-attendances",
+      "/my_teacher_attendances",
       <CarryOutOutlined />,
       ["teacher"]
     ),

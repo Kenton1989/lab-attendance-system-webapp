@@ -18,8 +18,13 @@ interface AuthContextType {
   user?: User;
   loading: boolean;
   error?: any;
-  login: (username: string, password: string) => Promise<boolean>;
-  logout: () => Promise<boolean>;
+  login: (
+    username: string,
+    password: string,
+    redirectWhenSuccess?: string
+  ) => Promise<boolean>;
+  logout: (redirectWhenSuccess?: string) => Promise<boolean>;
+  reload: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -117,6 +122,24 @@ export function AuthProvider(
     [navigate]
   );
 
+  const reload = useCallback(
+    async (redirectWhenSuccess?: string) => {
+      setLoading(true);
+      try {
+        let user = await getCurrentUser();
+        setUser(user);
+        if (redirectWhenSuccess) {
+          navigate(redirectWhenSuccess);
+        }
+      } catch (e) {
+        setError(e);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [navigate]
+  );
+
   // Make the provider update only when it should.
   // We only want to force re-renders if the user,
   // loading or error states change.
@@ -128,8 +151,9 @@ export function AuthProvider(
       error,
       login,
       logout,
+      reload,
     }),
-    [user, loading, error, props.loginPagePath, login, logout]
+    [user, loading, error, props.loginPagePath, login, logout, reload]
   );
 
   // Only render the underlying app after we

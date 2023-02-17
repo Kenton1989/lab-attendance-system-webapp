@@ -4,6 +4,7 @@ import "./index.css";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import { DEFAULT_HOME_PATH } from "../const";
+import { REQUIRED_FIELD_RULE } from "../form";
 
 const { Header, Footer, Content } = Layout;
 
@@ -65,7 +66,7 @@ export default function Login(props: {
           <Form.Item
             label="Username"
             name="username"
-            rules={[{ required: true, message: "Please input your username!" }]}
+            rules={[REQUIRED_FIELD_RULE]}
           >
             <Input />
           </Form.Item>
@@ -73,7 +74,7 @@ export default function Login(props: {
           <Form.Item
             label="Password"
             name="password"
-            rules={[{ required: true, message: "Please input your password!" }]}
+            rules={[REQUIRED_FIELD_RULE]}
           >
             <Input.Password />
           </Form.Item>

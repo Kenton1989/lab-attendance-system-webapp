@@ -240,10 +240,29 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
           Show Inactive
         </Checkbox>
       )}
-      {allowCreate && <Button icon={<PlusOutlined />}>Add</Button>}
-      {allowUploadCsv && <Button icon={<UploadOutlined />}>Upload CSV</Button>}
+      {allowCreate && (
+        <Button
+          icon={<PlusOutlined />}
+          onClick={() => alert("not implemented")}
+        >
+          Add
+        </Button>
+      )}
+      {allowUploadCsv && (
+        <Button
+          icon={<UploadOutlined />}
+          onClick={() => alert("not implemented")}
+        >
+          Upload CSV
+        </Button>
+      )}
       {allowDownloadCsv && (
-        <Button icon={<DownloadOutlined />}>Download CSV</Button>
+        <Button
+          icon={<DownloadOutlined />}
+          onClick={() => alert("not implemented")}
+        >
+          Download CSV
+        </Button>
       )}
     </Space>
   );
@@ -271,7 +290,7 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
               total: data?.count,
               current: currentPage,
               pageSize: pageSize,
-              hideOnSinglePage: true,
+              position: ["bottomLeft"],
             }}
             title={hideTableHeader ? undefined : renderTableHeader}
             onRow={getRowProps}

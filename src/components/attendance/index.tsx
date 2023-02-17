@@ -63,7 +63,7 @@ export function StudentAttendance(props: {}) {
       readableRoles={STAFF_ROLE}
       creatableRoles={ADMIN_ROLE}
       api={api.student_attendance}
-      formatItemPath={({ id }) => `/student-attendances/${id}`}
+      formatItemPath={({ id }) => `/student_attendances/${id}`}
       filterFormItems={<AttendanceFilterItems />}
     />
   );
@@ -76,7 +76,7 @@ export function TeacherAttendance(props: {}) {
       readableRoles={STAFF_ROLE}
       creatableRoles={ADMIN_ROLE}
       api={api.teacher_attendance}
-      formatItemPath={({ id }) => `/teacher-attendances/${id}`}
+      formatItemPath={({ id }) => `/teacher_attendances/${id}`}
       filterFormItems={<AttendanceFilterItems />}
     />
   );
@@ -111,7 +111,7 @@ export function MyStudentAttendance(props: {}) {
       readableRoles={STUDENT_ROLE}
       creatableRoles={NO_ROLE}
       api={api.my_student_attendance}
-      formatItemPath={({ id }) => `/student-attendances/${id}`}
+      formatItemPath={({ id }) => `/student_attendances/${id}`}
       hideTableHeader
       filterFormItems={
         <MyAttendanceFilterItems
@@ -129,7 +129,7 @@ export function MyTeacherAttendance(props: {}) {
       readableRoles={TEACHER_ROLE}
       creatableRoles={NO_ROLE}
       api={api.my_teacher_attendance}
-      formatItemPath={({ id }) => `/teacher-attendances/${id}`}
+      formatItemPath={({ id }) => `/teacher_attendances/${id}`}
       hideTableHeader
       filterFormItems={
         <MyAttendanceFilterItems

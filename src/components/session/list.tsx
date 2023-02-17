@@ -1,8 +1,9 @@
 import { Form, Tag } from "antd";
 import { ColumnsType } from "antd/es/table";
-import api, { Session } from "../../api";
+import { useState } from "react";
+import api, { Group, Session, UrlParamSet } from "../../api";
 import { useAuth, useHasRole } from "../auth-context";
-import { GroupSelect, LabSelect, WeekSelect } from "../form";
+import { CourseSelect, GroupSelect, LabSelect, WeekSelect } from "../form";
 import { useRootPageTitle } from "../root-page-context";
 import { SimpleRestApiTable } from "../table";
 
@@ -57,6 +58,8 @@ export function SessionList(props: {}) {
   useAuth({ rolesPermitted: READABLE_ROLES });
   const canCreate = useHasRole(CREATABLE_ROLES);
 
+  const [groupParams, setGroupParams] = useState<UrlParamSet<Group>>({});
+
   return (
     <SimpleRestApiTable
       api={api.session}
@@ -68,8 +71,11 @@ export function SessionList(props: {}) {
       allowDownloadCsv
       filterFormItems={
         <>
+          <Form.Item label="Course" name="course">
+            <CourseSelect onChange={(id) => setGroupParams({ course: id })} />
+          </Form.Item>
           <Form.Item label="Group" name="group">
-            <GroupSelect />
+            <GroupSelect additionalListUrlParams={groupParams} />
           </Form.Item>
           <Form.Item label="Lab" name="lab">
             <LabSelect />

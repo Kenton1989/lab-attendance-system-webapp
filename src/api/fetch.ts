@@ -2,10 +2,16 @@ import { StatusCodes } from "http-status-codes";
 
 export class ApiError extends Error {
   response: Response;
+  _jsonBody: any;
 
   constructor(resp: Response, message?: string, options?: ErrorOptions) {
     super(message, options);
     this.response = resp;
+    this._jsonBody = loadJson(resp, undefined);
+  }
+
+  async jsonBody(): Promise<any> {
+    return this._jsonBody;
   }
 }
 
@@ -38,14 +44,17 @@ export async function loadJson(
 async function checkStatus(resp: Response) {
   if (resp.ok) return;
 
-  let data = await loadJson(resp, "HTTP request failed");
-  console.error(data);
+  let err: ApiError;
 
   if (resp.status >= 400 && resp.status < 500) {
-    throw new Http4xxError(resp);
+    err = new Http4xxError(resp);
+  } else {
+    err = new ApiError(resp);
   }
 
-  throw new ApiError(resp);
+  console.error((await err.jsonBody()) ?? "HTTP request failed");
+
+  throw err;
 }
 
 /**
@@ -105,7 +114,7 @@ export async function jsonFetch(
   data?: any,
   options: RequestInit = {}
 ): Promise<any> {
-  // await sleep(500);
+  await sleep(500);
 
   let requestInit = options;
 

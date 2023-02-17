@@ -122,7 +122,9 @@ export class SimpleRestApi<DataType, IdType = number | string> {
   ): Promise<boolean> {
     let { urlParams, emptyPatch = {}, ...others } = options;
 
-    let param = createUrlParamObj(urlParams);
+    let param = createUrlParamObj({
+      ...urlParams,
+    });
 
     try {
       await authJsonFetch(`${this.urlBase}/${id}?${param}`, emptyPatch, {

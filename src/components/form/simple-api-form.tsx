@@ -32,7 +32,8 @@ type SimpleRestApiUpdateFormProps<DataT, FormValueT = DataT> = {
   additionalDeleteOptions?: RequestOptions<DataT>;
   redirectAfterDelete?: string;
 
-  disableUpdate?: boolean;
+  allowUpdate?: boolean;
+  disableAutoCheckUpdatePerm?: boolean;
   allowDelete?: boolean;
   hideIsActiveItem?: boolean;
 } & FormProps<FormValueT>;
@@ -55,9 +56,13 @@ export function SimpleRestApiUpdateForm<DataT, FormValueT = DataT>(
 
     onDataLoaded = doNothing,
 
-    disableUpdate = false,
+    allowUpdate,
+    disableAutoCheckUpdatePerm = allowUpdate !== undefined,
     allowDelete = false,
     hideIsActiveItem = false,
+
+    form: parentForm,
+    ...formProps
   } = props;
 
   const [msg, msgCtx] = useMessage();
@@ -66,20 +71,21 @@ export function SimpleRestApiUpdateForm<DataT, FormValueT = DataT>(
   const loadData = useCallback(async () => {
     const data = await api.retrieve(dataId, additionalRetrieveOptions);
     const canUpdate =
-      !disableUpdate &&
+      !disableAutoCheckUpdatePerm &&
       (await api.canUpdate(dataId, additionalCanUpdateOptions));
     return { data, canUpdate };
   }, [
     api,
     dataId,
-    disableUpdate,
+    disableAutoCheckUpdatePerm,
     additionalRetrieveOptions,
     additionalCanUpdateOptions,
   ]);
 
   const { data, loading, reload } = useApiData(loadData);
 
-  const [form] = Form.useForm();
+  const [childForm] = Form.useForm();
+  const form = parentForm || childForm;
 
   useEffect(() => {
     if (data) onDataLoaded(data.data, data.canUpdate);
@@ -98,12 +104,22 @@ export function SimpleRestApiUpdateForm<DataT, FormValueT = DataT>(
   const onFinish = useCallback(
     async (val: any) => {
       setEditing(true);
-      await api.update(dataId, formToData(val), additionalUpdateOptions);
+      const newData = formToData(val);
+      try {
+        await api.update(dataId, newData, additionalUpdateOptions);
+      } catch (e: any) {
+        msg.open({
+          type: "error",
+          content: `failed to update${e.status ? `(code: ${e.status})` : ""}`,
+        });
+        return;
+      } finally {
+        setEditing(false);
+      }
       msg.open({
         type: "success",
         content: "successfully updated",
       });
-      setEditing(false);
       await reload();
     },
     [api, dataId, formToData, additionalUpdateOptions, reload, msg]
@@ -111,13 +127,23 @@ export function SimpleRestApiUpdateForm<DataT, FormValueT = DataT>(
 
   const onDeleteConfirm = useCallback(async () => {
     setEditing(true);
-    await api.destroy(dataId, additionalDeleteOptions);
-    msg.open({
-      type: "success",
-      content: "successfully deleted",
-    });
-    navigate(redirectAfterDelete);
+    try {
+      await api.destroy(dataId, additionalDeleteOptions);
+      msg.open({
+        type: "success",
+        content: "successfully deleted",
+      });
+    } catch (e) {
+      msg.open({
+        type: "error",
+        content: "failed to update",
+      });
+      return;
+    } finally {
+      setEditing(false);
+    }
     setEditing(false);
+    navigate(redirectAfterDelete);
   }, [
     msg,
     api,
@@ -127,12 +153,23 @@ export function SimpleRestApiUpdateForm<DataT, FormValueT = DataT>(
     redirectAfterDelete,
   ]);
 
-  const canUpdate = !disableUpdate && !loading && !editing && data?.canUpdate;
+  const canUpdate = !loading && !editing && data?.canUpdate;
 
   return (
     <>
       {msgCtx}
-      <Form disabled={!canUpdate} form={form} onFinish={onFinish}>
+      <Form
+        {...formProps}
+        disabled={!canUpdate}
+        form={form}
+        onFinish={onFinish}
+        onFinishFailed={() =>
+          msg.open({
+            type: "error",
+            content: "failed to submit, please check the form ",
+          })
+        }
+      >
         {formItems}
         {hideIsActiveItem || (
           <SwitchFormItem label="Is Active" name="is_active" />
@@ -156,6 +193,15 @@ export function SimpleRestApiUpdateForm<DataT, FormValueT = DataT>(
                   <Button danger>Delete</Button>
                 </Popconfirm>
               )}
+              <Button
+                onClick={async () => {
+                  await reload();
+                  msg.open({ type: "info", content: "refreshed" });
+                }}
+                disabled={false}
+              >
+                Refresh
+              </Button>
             </Space>
           </Form.Item>
         )}

@@ -2,12 +2,23 @@ import { Form, Input, InputNumber, Space } from "antd";
 import {} from "antd/es/select";
 import { useCallback, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import api, { Group, RequestOptions } from "../../api";
-import { LabSelect, SimpleRestApiUpdateForm, UserSelect } from "../form";
+import api, {
+  Group,
+  GroupStudent,
+  RequestOptions,
+  StudentMakeUpSession,
+} from "../../api";
+import {
+  LabSelect,
+  REQUIRED_FIELD_RULE,
+  SimpleRestApiUpdateForm,
+  UserSelect,
+} from "../form";
 import { SESSION_COLUMNS } from "../session/list";
 import { useRootPageTitle } from "../root-page-context";
 import { SimpleRestApiTable } from "../table";
 import { useHasRole } from "../auth-context";
+import { ColumnsType } from "antd/es/table";
 
 const GROUP_RETRIEVE_PARAMS: RequestOptions<Group> = {
   urlParams: {
@@ -44,7 +55,7 @@ export function GroupDetail(props: {}) {
     setGroup(val);
   }, []);
 
-  const listSessionUrlParam = useMemo(() => ({ group: groupId }), [groupId]);
+  const groupIdUrlParam = useMemo(() => ({ group: groupId }), [groupId]);
 
   if (!groupId) {
     return <></>;
@@ -60,13 +71,21 @@ export function GroupDetail(props: {}) {
         allowDelete={allowDelete}
         formItems={
           <>
-            <Form.Item label="Course Code" name={["course", "code"]}>
+            <Form.Item label="Course" name={["course", "code"]}>
               <Input disabled />
             </Form.Item>
-            <Form.Item label="Group Name" name={"name"} required>
+            <Form.Item
+              label="Group Name"
+              name={"name"}
+              rules={[REQUIRED_FIELD_RULE]}
+            >
               <Input />
             </Form.Item>
-            <Form.Item label="Lab" name={"lab_id"} required>
+            <Form.Item
+              label="Lab"
+              name={"lab_id"}
+              rules={[REQUIRED_FIELD_RULE]}
+            >
               <LabSelect />
             </Form.Item>
             <Form.Item label="Room">
@@ -93,29 +112,92 @@ export function GroupDetail(props: {}) {
         api={api.session}
         formatItemPath={({ id }) => `/sessions/${id}`}
         columns={SESSION_COLUMNS}
-        additionalListUrlParams={listSessionUrlParam}
+        additionalListUrlParams={groupIdUrlParam}
+        allowCreate={canUpdateGroup}
+        allowUploadCsv={canUpdateGroup}
+        allowDownloadCsv
+      />
+
+      <SimpleRestApiTable
+        title="Students"
+        api={api.group_student}
+        formatItemPath={({ id }) => `/group_students/${id}`}
+        columns={GROUP_STUDENT_COLUMNS}
+        additionalListUrlParams={groupIdUrlParam}
         allowSearch
         allowCreate={canUpdateGroup}
         allowUploadCsv={canUpdateGroup}
         allowDownloadCsv
-        filterFormItems={
-          <>
-            <Form.Item label="Lab" name="lab">
-              <LabSelect />
-            </Form.Item>
-            <Form.Item label="Session Supervisor" name="supervisors_contain">
-              <UserSelect />
-            </Form.Item>
-            <Form.Item label="Student" name="students_contain">
-              <UserSelect />
-            </Form.Item>
-            <Form.Item label="TA" name="teachers_contain">
-              <UserSelect />
-            </Form.Item>
-          </>
-        }
-        // allowCreate
+        defaultPageSize={50}
+      />
+
+      <SimpleRestApiTable
+        title="Make Up Sessions"
+        api={api.student_make_up_session}
+        formatItemPath={({ id }) => `/make_up_sessions/${id}`}
+        columns={MAKE_UP_SESSION_COLUMNS}
+        additionalListUrlParams={groupIdUrlParam}
+        allowCreate={canUpdateGroup}
+        allowUploadCsv={canUpdateGroup}
+        allowDownloadCsv
       />
     </Space>
   );
 }
+const GROUP_STUDENT_COLUMNS: ColumnsType<GroupStudent> = [
+  {
+    title: "Username",
+    dataIndex: ["student", "username"],
+
+    width: "8em",
+  },
+  {
+    title: "Name",
+    dataIndex: ["student", "display_name"],
+  },
+  {
+    title: "Seat",
+    dataIndex: "seat",
+    width: "8em",
+  },
+];
+
+const MAKE_UP_SESSION_COLUMNS: ColumnsType<StudentMakeUpSession> = [
+  {
+    title: "Student",
+    children: [
+      { title: "Username", dataIndex: ["user", "username"], width: "8em" },
+      { title: "Name", dataIndex: ["user", "display_name"] },
+    ],
+  },
+  {
+    title: "Original Session",
+    children: [
+      {
+        title: "Grp",
+        dataIndex: ["original_session", "group", "name"],
+        width: "8em",
+      },
+      {
+        title: "Week",
+        dataIndex: ["original_session", "week", "name"],
+        width: "8em",
+      },
+    ],
+  },
+  {
+    title: "Make Up",
+    children: [
+      {
+        title: "Grp",
+        dataIndex: ["original_session", "group", "name"],
+        width: "8em",
+      },
+      {
+        title: "Week",
+        dataIndex: ["original_session", "week", "name"],
+        width: "8em",
+      },
+    ],
+  },
+];

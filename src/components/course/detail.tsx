@@ -2,9 +2,14 @@ import { Form, Input, Space } from "antd";
 import {} from "antd/es/select";
 import { useCallback, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import api, { Course, RequestOptions, User } from "../../api";
+import api, { Course, RequestOptions } from "../../api";
 import { useHasRole } from "../auth-context";
-import { LabSelect, SimpleRestApiUpdateForm, UserSelect } from "../form";
+import {
+  LabSelect,
+  REQUIRED_FIELD_RULE,
+  SimpleRestApiUpdateForm,
+  UserSelect,
+} from "../form";
 import { GROUP_COLUMNS } from "../group/list";
 import { useRootPageTitle } from "../root-page-context";
 import { SimpleRestApiTable } from "../table";
@@ -24,18 +29,17 @@ const COURSE_RETRIEVE_PARAMS: RequestOptions<Course> = {
 
 export function CourseDetail(props: {}) {
   const { courseId } = useParams();
-  const [code, setCode] = useState("loading...");
-  const [coordinators, setCoordinators] = useState<User[]>([]);
+  const [course, setCourse] = useState<Course>();
   const [canUpdateCourse, setCanUpdateCourse] = useState(false);
   const allowDelete = useHasRole(["admin"]);
 
-  useRootPageTitle(["course", code]);
+  useRootPageTitle(
+    course ? ["course", course.code!] : ["course", "loading..."]
+  );
 
   const onDataLoaded = useCallback((val: Course, canUpdate: boolean) => {
     setCanUpdateCourse(canUpdate);
-    setCode(val.code!);
-    const coords = val.coordinators ?? [];
-    setCoordinators(coords);
+    setCourse(val);
   }, []);
 
   const listGroupUrlParam = useMemo(() => ({ course: courseId }), [courseId]);
@@ -57,11 +61,14 @@ export function CourseDetail(props: {}) {
             <Form.Item label="Code" name="code">
               <Input disabled />
             </Form.Item>
-            <Form.Item label="Title" name="title" required>
+            <Form.Item label="Title" name="title" rules={[REQUIRED_FIELD_RULE]}>
               <Input />
             </Form.Item>
             <Form.Item label="Coordinators" name="coordinator_ids">
-              <UserSelect mode="multiple" persistDataOptions={coordinators} />
+              <UserSelect
+                mode="multiple"
+                persistDataOptions={course?.coordinators}
+              />
             </Form.Item>
           </>
         }
