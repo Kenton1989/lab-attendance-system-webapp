@@ -63,7 +63,7 @@ export function WeekDetail(props: {}) {
               name={"name"}
               rules={[REQUIRED_FIELD_RULE]}
             >
-              <Input />
+              <Input maxLength={20} />
             </Form.Item>
             <Form.Item
               label="Start Monday"

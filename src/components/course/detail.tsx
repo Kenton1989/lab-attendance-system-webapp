@@ -62,7 +62,7 @@ export function CourseDetail(props: {}) {
               <Input disabled />
             </Form.Item>
             <Form.Item label="Title" name="title" rules={[REQUIRED_FIELD_RULE]}>
-              <Input />
+              <Input maxLength={200} />
             </Form.Item>
             <Form.Item label="Coordinators" name="coordinator_ids">
               <UserSelect

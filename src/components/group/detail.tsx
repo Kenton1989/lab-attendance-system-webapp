@@ -79,7 +79,7 @@ export function GroupDetail(props: {}) {
               name={"name"}
               rules={[REQUIRED_FIELD_RULE]}
             >
-              <Input />
+              <Input maxLength={20} />
             </Form.Item>
             <Form.Item
               label="Lab"
@@ -89,7 +89,7 @@ export function GroupDetail(props: {}) {
               <LabSelect />
             </Form.Item>
             <Form.Item label="Room">
-              <InputNumber min={1} />
+              <InputNumber min={1} max={50} />
             </Form.Item>
             <Form.Item label="Supervisors" name="supervisor_ids">
               <UserSelect

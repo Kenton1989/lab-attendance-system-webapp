@@ -70,7 +70,7 @@ export function GroupStudentDetail(props: {}) {
               <GroupSelect additionalListUrlParams={courseIdUrlParam} />
             </Form.Item>
             <Form.Item label="Seat" name="seat">
-              <Input maxLength={10} />
+              <Input maxLength={20} />
             </Form.Item>
           </>
         }
