@@ -16,7 +16,7 @@ function identity(val: any) {
 
 function doNothing() {}
 
-type SimpleRestApiUpdateFormProps<DataT, FormValueT = DataT> = {
+export type SimpleRestApiUpdateFormProps<DataT, FormValueT = DataT> = {
   api: SimpleRestApi<DataT>;
   dataId: number | string;
   formItems?: ReactNode;
@@ -38,6 +38,9 @@ type SimpleRestApiUpdateFormProps<DataT, FormValueT = DataT> = {
   hideIsActiveItem?: boolean;
 } & FormProps<FormValueT>;
 
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 export function SimpleRestApiUpdateForm<DataT, FormValueT = DataT>(
   props: SimpleRestApiUpdateFormProps<DataT, FormValueT>
 ) {
@@ -131,7 +134,7 @@ export function SimpleRestApiUpdateForm<DataT, FormValueT = DataT>(
       await api.destroy(dataId, additionalDeleteOptions);
       msg.open({
         type: "success",
-        content: "successfully deleted",
+        content: "successfully deleted (will redirect in 3 seconds)",
       });
     } catch (e) {
       msg.open({
@@ -139,10 +142,8 @@ export function SimpleRestApiUpdateForm<DataT, FormValueT = DataT>(
         content: "failed to update",
       });
       return;
-    } finally {
-      setEditing(false);
     }
-    setEditing(false);
+    await sleep(3000);
     navigate(redirectAfterDelete);
   }, [
     msg,

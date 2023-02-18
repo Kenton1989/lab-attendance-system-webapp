@@ -149,7 +149,7 @@ export class SimpleRestApi<DataType, IdType = number | string> {
     let param = createUrlParamObj(urlParams);
 
     return await authJsonFetch(`${this.urlBase}/${id}?${param}`, undefined, {
-      method: "GET",
+      method: "DELETE",
       ...others,
     });
   }

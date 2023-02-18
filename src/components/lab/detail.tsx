@@ -1,7 +1,7 @@
-import { Form, Input, InputNumber, Space } from "antd";
+import { Alert, Form, Input, InputNumber, Space } from "antd";
 import {} from "antd/es/select";
 import { useCallback, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import api, { Lab, RequestOptions } from "../../api";
 import { useHasRole } from "../auth-context";
 import { SimpleRestApiUpdateForm, UserSelect } from "../form";
@@ -24,17 +24,26 @@ const LAB_RETRIEVE_PARAMS: RequestOptions<Lab> = {
 export function LabDetail(props: {}) {
   const { labId } = useParams();
   const [lab, setLab] = useState<Lab>();
+  const [canUpdateLab, setCanUpdateLab] = useState(false);
   const allowDelete = useHasRole(["admin"]);
 
   useRootPageTitle(lab ? ["lab", lab.username!] : ["lab", "loading..."]);
 
-  const onDataLoaded = useCallback((val: Lab) => {
+  const onDataLoaded = useCallback((val: Lab, canUpdate: boolean) => {
     setLab(val);
+    setCanUpdateLab(canUpdate);
   }, []);
 
   if (!labId) {
     return <></>;
   }
+
+  const changeUsernameHint = (
+    <>
+      to update username and display name of lab, please go to{" "}
+      <Link to={`/users/${labId}`}>the corresponding user page</Link>.
+    </>
+  );
 
   return (
     <Space style={{ width: "100%" }} direction="vertical">
@@ -50,8 +59,13 @@ export function LabDetail(props: {}) {
               <Input disabled />
             </Form.Item>
             <Form.Item label="Lab Name" name="display_name">
-              <Input />
+              <Input disabled />
             </Form.Item>
+            {canUpdateLab && (
+              <Form.Item>
+                <Alert type="info" message={changeUsernameHint} />
+              </Form.Item>
+            )}
             <Form.Item
               label="Room Count (only increment is allowed)"
               name="room_count"

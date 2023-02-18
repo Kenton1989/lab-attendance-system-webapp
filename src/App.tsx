@@ -18,13 +18,17 @@ import { GroupDetail, GroupList } from "./components/group";
 import { SessionDetail, SessionList } from "./components/session";
 import { WeekDetail, WeekList } from "./components/week";
 import {
-  MyStudentAttendance,
-  MyTeacherAttendance,
-  StudentAttendance,
-  TeacherAttendance,
+  MyStudentAttendanceList,
+  MyTeacherAttendanceList,
+  StudentAttendanceList,
+  TeacherAttendanceList,
 } from "./components/attendance";
 import { ChangePassword } from "./components/user/password";
-import { GroupStudent } from "./components/group/group-student";
+import { GroupStudentDetail } from "./components/group/group-student";
+import {
+  StudentAttendanceDetail,
+  TeacherAttendanceDetail,
+} from "./components/attendance/detail";
 
 function App() {
   return (
@@ -61,8 +65,8 @@ function PageRouter(): JSX.Element {
               <Route path=":groupId" element={<GroupDetail />} />
             </Route>
             <Route
-              path="group_students/:groupStudId"
-              element={<GroupStudent />}
+              path="group_students/:groupStudentId"
+              element={<GroupStudentDetail />}
             />
             <Route path="sessions">
               <Route index element={<SessionList />} />
@@ -77,20 +81,26 @@ function PageRouter(): JSX.Element {
               <Route path=":weekId" element={<WeekDetail />} />
             </Route>
             <Route path="student_attendances">
-              <Route index element={<StudentAttendance />} />
-              <Route path=":attendanceId" element={<DummyComponent />} />
+              <Route index element={<StudentAttendanceList />} />
+              <Route
+                path=":attendanceId"
+                element={<StudentAttendanceDetail />}
+              />
             </Route>
             <Route path="teacher_attendances">
-              <Route index element={<TeacherAttendance />} />
-              <Route path=":attendanceId" element={<DummyComponent />} />
+              <Route index element={<TeacherAttendanceList />} />
+              <Route
+                path=":attendanceId"
+                element={<TeacherAttendanceDetail />}
+              />
             </Route>
             <Route
               path="my_student_attendances"
-              element={<MyStudentAttendance />}
+              element={<MyStudentAttendanceList />}
             />
             <Route
               path="my_teacher_attendances"
-              element={<MyTeacherAttendance />}
+              element={<MyTeacherAttendanceList />}
             />
             <Route path="preferences" element={<DummyComponent />} />
             <Route path="attendance_statistics">
