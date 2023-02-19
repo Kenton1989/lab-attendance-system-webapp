@@ -56,6 +56,7 @@ export function CourseDetail(props: {}) {
         onDataLoaded={onDataLoaded}
         additionalRetrieveOptions={COURSE_RETRIEVE_PARAMS}
         allowDelete={allowDelete}
+        redirectAfterDelete="/courses"
         formItems={
           <>
             <Form.Item label="Code" name="code">

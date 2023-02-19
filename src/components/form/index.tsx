@@ -2,6 +2,7 @@ import { Form, FormItemProps, Switch, SwitchProps } from "antd";
 import { LabeledValue } from "antd/es/select";
 
 export * from "./simple-api-update-form";
+export * from "./simple-api-create-form";
 export * from "./select-item";
 export * from "./date-time-item";
 

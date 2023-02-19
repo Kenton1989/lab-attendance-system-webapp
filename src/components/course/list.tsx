@@ -31,6 +31,7 @@ export function CourseList(props: {}) {
       api={api.course}
       formatItemPath={({ id }) => `/courses/${id}`}
       columns={COURSE_COLUMNS}
+      createItemPath="/courses/new"
       allowSearch
       allowCreate={canCreate}
       allowUploadCsv={canCreate}

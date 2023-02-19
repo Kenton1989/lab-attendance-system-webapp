@@ -29,6 +29,7 @@ import {
   StudentAttendanceDetail,
   TeacherAttendanceDetail,
 } from "./components/attendance/detail";
+import { CreateCourse } from "./components/course/create";
 
 function App() {
   return (
@@ -58,6 +59,7 @@ function PageRouter(): JSX.Element {
             </Route>
             <Route path="courses">
               <Route index element={<CourseList />} />
+              <Route path="new" element={<CreateCourse />} />
               <Route path=":courseId" element={<CourseDetail />} />
             </Route>
             <Route path="groups">

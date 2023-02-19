@@ -10,12 +10,6 @@ import {
 } from "../../api";
 import { useApiData } from "../backend";
 
-function identity(val: any) {
-  return val;
-}
-
-function doNothing() {}
-
 export type SimpleRestApiUpdateFormProps<DataT, FormValueT = DataT> = {
   api: SimpleRestApi<DataT>;
   dataId: number | string;
@@ -38,9 +32,6 @@ export type SimpleRestApiUpdateFormProps<DataT, FormValueT = DataT> = {
   hideIsActiveItem?: boolean;
 } & FormProps<FormValueT>;
 
-function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
 export function SimpleRestApiUpdateForm<DataT, FormValueT = DataT>(
   props: SimpleRestApiUpdateFormProps<DataT, FormValueT>
 ) {
@@ -209,4 +200,14 @@ export function SimpleRestApiUpdateForm<DataT, FormValueT = DataT>(
       </Form>
     </>
   );
+}
+
+function identity(val: any) {
+  return val;
+}
+
+function doNothing() {}
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }

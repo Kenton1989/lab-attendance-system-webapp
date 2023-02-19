@@ -38,6 +38,7 @@ export type SimpleRestApiTableProps<DataType, FiltersType = any> = {
   columns?: ColumnsType<DataType>;
   formatItemPath: (item: DataType) => string;
   onDataLoaded?: (data: PaginatedListResponse<DataType>) => unknown;
+  createItemPath?: string;
   title?: string;
   hideTableHeader?: boolean;
   allowFilterByIsActive?: boolean;
@@ -93,6 +94,7 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
     formatItemPath,
     title,
     onDataLoaded = doNothing,
+    createItemPath,
     defaultPageSize = DEFAULT_PAGE_SIZE,
     additionalListUrlParams,
     additionalListRequestParams,
@@ -240,10 +242,10 @@ export function SimpleRestApiTable<DataType extends object, FiltersType = any>(
           Show Inactive
         </Checkbox>
       )}
-      {allowCreate && (
+      {allowCreate && createItemPath && (
         <Button
           icon={<PlusOutlined />}
-          onClick={() => alert("not implemented")}
+          onClick={() => navigate(createItemPath)}
         >
           Add
         </Button>
