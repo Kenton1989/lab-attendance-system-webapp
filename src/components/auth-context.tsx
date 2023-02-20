@@ -88,7 +88,7 @@ export function AuthProvider(
         return true;
       } catch (e) {
         setError(e);
-        return false;
+        throw e;
       } finally {
         setLoading(false);
       }
@@ -114,7 +114,7 @@ export function AuthProvider(
         return true;
       } catch (e) {
         setError(e);
-        return false;
+        throw e;
       } finally {
         setLoading(false);
       }
@@ -133,6 +133,7 @@ export function AuthProvider(
         }
       } catch (e) {
         setError(e);
+        throw e;
       } finally {
         setLoading(false);
       }

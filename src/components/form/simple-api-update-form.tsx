@@ -27,7 +27,6 @@ export type SimpleRestApiUpdateFormProps<DataT, FormValueT = DataT> = {
   redirectAfterDelete?: string;
 
   allowUpdate?: boolean;
-  disableAutoCheckUpdatePerm?: boolean;
   allowDelete?: boolean;
   hideIsActiveItem?: boolean;
 } & FormProps<FormValueT>;
@@ -51,7 +50,6 @@ export function SimpleRestApiUpdateForm<DataT, FormValueT = DataT>(
     onDataLoaded = doNothing,
 
     allowUpdate,
-    disableAutoCheckUpdatePerm = allowUpdate !== undefined,
     allowDelete = false,
     hideIsActiveItem = false,
 
@@ -65,13 +63,12 @@ export function SimpleRestApiUpdateForm<DataT, FormValueT = DataT>(
   const loadData = useCallback(async () => {
     const data = await api.retrieve(dataId, additionalRetrieveOptions);
     const canUpdate =
-      !disableAutoCheckUpdatePerm &&
-      (await api.canUpdate(dataId, additionalCanUpdateOptions));
+      allowUpdate ?? (await api.canUpdate(dataId, additionalCanUpdateOptions));
     return { data, canUpdate };
   }, [
+    allowUpdate,
     api,
     dataId,
-    disableAutoCheckUpdatePerm,
     additionalRetrieveOptions,
     additionalCanUpdateOptions,
   ]);

@@ -2,12 +2,7 @@ import { Form, Input, InputNumber, Space } from "antd";
 import {} from "antd/es/select";
 import { useCallback, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import api, {
-  Group,
-  GroupStudent,
-  RequestOptions,
-  StudentMakeUpSession,
-} from "../../api";
+import api, { Group, GroupStudent, StudentMakeUpSession } from "../../api";
 import {
   LabSelect,
   REQUIRED_FIELD_RULE,
@@ -19,24 +14,7 @@ import { useRootPageTitle } from "../root-page-context";
 import { SimpleRestApiTable } from "../table";
 import { useHasRole } from "../auth-context";
 import { ColumnsType } from "antd/es/table";
-
-const GROUP_RETRIEVE_PARAMS: RequestOptions<Group> = {
-  urlParams: {
-    fields: [
-      "id",
-      "course",
-      "name",
-      "is_active",
-      "lab",
-      "lab_id",
-      "room_no",
-      "supervisor_ids",
-      "supervisors",
-      "teacher_ids",
-      "teachers",
-    ],
-  },
-};
+import { GROUP_RETRIEVE_PARAMS } from "./const";
 
 export function GroupDetail(props: {}) {
   const { groupId } = useParams();
@@ -69,6 +47,7 @@ export function GroupDetail(props: {}) {
         onDataLoaded={onDataLoaded}
         additionalRetrieveOptions={GROUP_RETRIEVE_PARAMS}
         allowDelete={allowDelete}
+        redirectAfterDelete={`/courses/${group?.course?.id}`}
         formItems={
           <>
             <Form.Item label="Course" name={["course", "code"]}>

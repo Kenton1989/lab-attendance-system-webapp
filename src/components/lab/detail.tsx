@@ -2,24 +2,11 @@ import { Alert, Form, Input, InputNumber, Space } from "antd";
 import {} from "antd/es/select";
 import { useCallback, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import api, { Lab, RequestOptions } from "../../api";
+import api, { Lab } from "../../api";
 import { useHasRole } from "../auth-context";
 import { SimpleRestApiUpdateForm, UserSelect } from "../form";
 import { useRootPageTitle } from "../root-page-context";
-
-const LAB_RETRIEVE_PARAMS: RequestOptions<Lab> = {
-  urlParams: {
-    fields: [
-      "id",
-      "username",
-      "display_name",
-      "room_count",
-      "executives",
-      "executive_ids",
-      "is_active",
-    ],
-  },
-};
+import { LAB_RETRIEVE_PARAMS } from "./const";
 
 export function LabDetail(props: {}) {
   const { labId } = useParams();

@@ -1,45 +1,21 @@
 import { Form } from "antd";
-import { ColumnsType } from "antd/es/table";
-import api, { Group } from "../../api";
+import api from "../../api";
 import { useAuth, useHasRole } from "../auth-context";
+import { LISTABLE_ROLES } from "../course";
 import { CourseSelect, LabSelect, UserSelect } from "../form";
 import { useRootPageTitle } from "../root-page-context";
 import { SimpleRestApiTable } from "../table";
-
-export const GROUP_COLUMNS: ColumnsType<Group> = [
-  {
-    title: "Course",
-    dataIndex: ["course", "code"],
-    width: "6em",
-  },
-  {
-    title: "Group",
-    dataIndex: "name",
-  },
-  {
-    title: "Lab",
-    dataIndex: ["lab", "username"],
-    width: "6em",
-  },
-  {
-    title: "Room",
-    dataIndex: ["room_no"],
-    width: "6em",
-  },
-];
-
-const READABLE_ROLES = ["staff", "admin"];
-const CREATABLE_ROLES = ["admin"];
+import { CREATABLE_ROLES, formatGroupItemPath, GROUP_COLUMNS } from "./const";
 
 export function GroupList(props: {}) {
   useRootPageTitle("Groups");
-  useAuth({ rolesPermitted: READABLE_ROLES });
+  useAuth({ rolesPermitted: LISTABLE_ROLES });
   const canCreate = useHasRole(CREATABLE_ROLES);
 
   return (
     <SimpleRestApiTable
       api={api.group}
-      formatItemPath={({ id }) => `/groups/${id}`}
+      formatItemPath={formatGroupItemPath}
       columns={GROUP_COLUMNS}
       allowSearch
       allowCreate={canCreate}

@@ -5,6 +5,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import { DEFAULT_HOME_PATH } from "../const";
 import { REQUIRED_FIELD_RULE } from "../form";
+import { formatUsername } from "../user/const";
 
 const { Header, Footer, Content } = Layout;
 
@@ -68,7 +69,7 @@ export default function Login(props: {
             name="username"
             rules={[REQUIRED_FIELD_RULE]}
           >
-            <Input />
+            <Input onInput={formatUsername} />
           </Form.Item>
 
           <Form.Item

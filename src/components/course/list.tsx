@@ -1,35 +1,25 @@
 import { Form } from "antd";
-import { ColumnsType } from "antd/es/table";
-import api, { Course } from "../../api";
+import api from "../../api";
 import { useAuth, useHasRole } from "../auth-context";
 import { UserSelect } from "../form";
 import { useRootPageTitle } from "../root-page-context";
 import { SimpleRestApiTable } from "../table";
-
-export const COURSE_COLUMNS: ColumnsType<Course> = [
-  {
-    title: "Code",
-    dataIndex: "code",
-    width: "6em",
-  },
-  {
-    title: "Title",
-    dataIndex: "title",
-  },
-];
-
-const READABLE_ROLES = ["staff", "admin"];
-const CREATABLE_ROLES = ["admin"];
+import {
+  COURSE_COLUMNS,
+  CREATABLE_ROLES,
+  formatCourseItemPath,
+  LISTABLE_ROLES,
+} from "./const";
 
 export function CourseList(props: {}) {
   useRootPageTitle("Courses");
-  useAuth({ rolesPermitted: READABLE_ROLES });
+  useAuth({ rolesPermitted: LISTABLE_ROLES });
   const canCreate = useHasRole(CREATABLE_ROLES);
 
   return (
     <SimpleRestApiTable
       api={api.course}
-      formatItemPath={({ id }) => `/courses/${id}`}
+      formatItemPath={formatCourseItemPath}
       columns={COURSE_COLUMNS}
       createItemPath="/courses/new"
       allowSearch

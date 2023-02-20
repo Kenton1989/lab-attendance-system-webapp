@@ -2,28 +2,16 @@ import { Button, Form, Input, Space } from "antd";
 import {} from "antd/es/select";
 import { useCallback, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import api, { User, RequestOptions } from "../../api";
+import api, { User } from "../../api";
 import { useAuth, useHasRole } from "../auth-context";
+import { DESTROYABLE_ROLES } from "../course";
 import {
   REQUIRED_FIELD_RULE,
   RoleSelect,
   SimpleRestApiUpdateForm,
 } from "../form";
 import { useRootPageTitle } from "../root-page-context";
-
-const USER_RETRIEVE_PARAMS: RequestOptions<User> = {
-  urlParams: {
-    fields: [
-      "id",
-      "username",
-      "display_name",
-      "email",
-      "roles",
-      "role_ids",
-      "is_active",
-    ],
-  },
-};
+import { formatUsername, USER_RETRIEVE_PARAMS } from "./const";
 
 export function UserDetail(props: {}) {
   const { auth } = useAuth({ loginRequired: true });
@@ -45,7 +33,13 @@ export function UserDetail(props: {}) {
   const isUserSelf = userId === "me" || userId === `${auth?.user?.id}`;
 
   const canChangePassword = user !== undefined && (isAdmin || isUserSelf);
-  const allowDelete = isAdmin;
+
+  const allowDelete = useHasRole(DESTROYABLE_ROLES);
+
+  // A user can update the his own password but not the whole profile.
+  // The auto update permission checking of SimpleRestApiUpdateForm
+  // cannot distinguish partial update permission and complete update permission.
+  // Only admin has full update permission.
   const allowUpdate = isAdmin;
 
   if (!userId) {
@@ -68,7 +62,7 @@ export function UserDetail(props: {}) {
               name="username"
               rules={[REQUIRED_FIELD_RULE]}
             >
-              <Input maxLength={50} />
+              <Input maxLength={50} onInput={formatUsername} />
             </Form.Item>
             <Form.Item label="Password">
               <Button

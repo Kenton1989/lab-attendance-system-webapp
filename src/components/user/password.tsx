@@ -8,6 +8,7 @@ import { useApiData } from "../backend";
 import { DEFAULT_404_PATH } from "../const";
 import { REQUIRED_FIELD_RULE } from "../form";
 import { useRootPageTitle } from "../root-page-context";
+import { VALIDATE_PASSWORD_CONFIRM } from "./const";
 
 export function ChangePassword(props: {}) {
   const { auth } = useAuth({ loginRequired: true });
@@ -81,17 +82,7 @@ export function ChangePassword(props: {}) {
         label="Confirm Password"
         name="confirm_password"
         dependencies={["password"]}
-        rules={[
-          REQUIRED_FIELD_RULE,
-          ({ getFieldValue }) => ({
-            async validator(_, confirmValue) {
-              const enteredValue = getFieldValue("password");
-              if (enteredValue && enteredValue !== confirmValue) {
-                throw new Error("two passwords you entered do not match");
-              }
-            },
-          }),
-        ]}
+        rules={[REQUIRED_FIELD_RULE, VALIDATE_PASSWORD_CONFIRM]}
       >
         <Input type="password" />
       </Form.Item>

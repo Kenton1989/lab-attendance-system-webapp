@@ -16,6 +16,8 @@ export type SimpleRestApiCreateFormProps<
   additionalCreateRequestOptions?: RequestOptions<DataT>;
   formatItemPath?: (data: DataT) => string;
 
+  onCreationError?: (e: any) => unknown;
+
   dataToForm?: (data: DataT) => FormValueT;
   formToData?: (values: FormValueT) => DataT;
 } & FormProps<FormValueT>;
@@ -33,6 +35,8 @@ export function SimpleRestApiCreateForm<
 
     additionalCreateRequestOptions,
     formatItemPath,
+
+    onCreationError = throwIfNot4xxError,
 
     form: parentForm,
   } = props;
@@ -57,7 +61,15 @@ export function SimpleRestApiCreateForm<
       try {
         newInstance = await api.create(data, additionalCreateRequestOptions);
       } catch (e) {
-        if (!(e instanceof Http4xxError)) throw e;
+        onCreationError(e);
+
+        if (!(e instanceof Http4xxError)) {
+          msg.open({
+            type: "error",
+            content: `failed to create`,
+          });
+          return;
+        }
 
         if (e.status === StatusCodes.FORBIDDEN) {
           msg.open({
@@ -70,6 +82,7 @@ export function SimpleRestApiCreateForm<
             content: `failed to create (code: ${e.status})`,
           });
         }
+
         return;
       } finally {
         setCreating(false);
@@ -87,6 +100,7 @@ export function SimpleRestApiCreateForm<
     },
     [
       formatItemPath,
+      onCreationError,
       additionalCreateRequestOptions,
       api,
       formToData,
@@ -110,4 +124,8 @@ export function SimpleRestApiCreateForm<
 
 function identity(val: any) {
   return val;
+}
+
+function throwIfNot4xxError(e: any) {
+  if (!(e instanceof Http4xxError)) throw e;
 }

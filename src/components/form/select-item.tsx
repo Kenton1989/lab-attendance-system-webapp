@@ -165,11 +165,19 @@ function formatUserLabel(val: User) {
   return `${val.display_name || val.username} (${val.username})`;
 }
 
-export function UserSelect(props: Partial<SimpleRestApiSelectProps<User>>) {
+export function UserSelect(
+  props: Partial<SimpleRestApiSelectProps<User>> & { role?: string }
+) {
+  const { role, ...otherProps } = props;
+
   const finalProps: SimpleRestApiSelectProps<User> = {
     api: api.user,
     formatLabel: formatUserLabel,
-    ...props,
+    ...otherProps,
+    additionalListUrlParams: {
+      role_names_contain: role,
+      ...props.additionalListUrlParams,
+    },
     style: { minWidth: "16em", ...props.style },
   };
   return <SimpleRestApiSelect {...finalProps} />;

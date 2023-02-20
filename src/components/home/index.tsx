@@ -2,9 +2,9 @@ import { Button, Descriptions, Space } from "antd";
 import { useNavigate } from "react-router-dom";
 import api from "../../api";
 import { useAuth } from "../auth-context";
-import { COURSE_COLUMNS } from "../course/list";
-import { GROUP_COLUMNS } from "../group/list";
-import { LAB_COLUMNS } from "../lab/list";
+import { COURSE_COLUMNS, formatCourseItemPath } from "../course";
+import { formatGroupItemPath, GROUP_COLUMNS } from "../group";
+import { formatLabItemPath, LAB_COLUMNS } from "../lab";
 import { useRootPageTitle } from "../root-page-context";
 import { SimpleRestApiTable } from "../table";
 
@@ -42,7 +42,7 @@ export function Home(props: {}) {
           <SimpleRestApiTable
             title="Managed Labs"
             api={api.my_managed_lab}
-            formatItemPath={(item) => `/labs/${item.id}`}
+            formatItemPath={formatLabItemPath}
             columns={LAB_COLUMNS}
             hideTableHeader
             hideIfEmpty
@@ -51,7 +51,7 @@ export function Home(props: {}) {
           <SimpleRestApiTable
             title="Managed Courses"
             api={api.my_managed_course}
-            formatItemPath={(item) => `/courses/${item.id}`}
+            formatItemPath={formatCourseItemPath}
             columns={COURSE_COLUMNS}
             hideTableHeader
             hideIfEmpty
@@ -60,7 +60,7 @@ export function Home(props: {}) {
           <SimpleRestApiTable
             title="Managed Groups"
             api={api.my_managed_group}
-            formatItemPath={(item) => `/groups/${item.id}`}
+            formatItemPath={formatGroupItemPath}
             columns={GROUP_COLUMNS}
             hideTableHeader
             hideIfEmpty

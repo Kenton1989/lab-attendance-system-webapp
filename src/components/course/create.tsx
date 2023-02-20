@@ -1,14 +1,13 @@
 import { Form, Input } from "antd";
-import api, { Course } from "../../api";
+import api from "../../api";
+import { useAuth } from "../auth-context";
 import { SimpleRestApiCreateForm, UserSelect } from "../form";
 import { useRootPageTitle } from "../root-page-context";
-
-function formatCourseItemPath(course: Course) {
-  return `/courses/${course.id}`;
-}
+import { CREATABLE_ROLES, formatCourseItemPath } from "./const";
 
 export function CreateCourse(props: {}) {
-  useRootPageTitle(["course", "new"]);
+  useRootPageTitle(["courses", "new"]);
+  useAuth({ rolesPermitted: CREATABLE_ROLES });
 
   return (
     <SimpleRestApiCreateForm

@@ -2,18 +2,13 @@ import { Form, Input, Space } from "antd";
 import {} from "antd/es/select";
 import { useCallback, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import api, { GroupStudent, RequestOptions } from "../../api";
+import api, { GroupStudent } from "../../api";
 import { useHasRole } from "../auth-context";
 import { GroupSelect, SimpleRestApiUpdateForm } from "../form";
 import {} from "../group/list";
 import { useRootPageTitle } from "../root-page-context";
 import {} from "../table";
-
-const GROUP_STUDENT_RETRIEVE_PARAMS: RequestOptions<GroupStudent> = {
-  urlParams: {
-    fields: ["id", "student", "group", "group_id", "seat"],
-  },
-};
+import { GROUP_STUDENT_RETRIEVE_PARAMS } from "./const";
 
 export function GroupStudentDetail(props: {}) {
   const { groupStudentId } = useParams();

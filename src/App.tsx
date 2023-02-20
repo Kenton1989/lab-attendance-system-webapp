@@ -13,7 +13,7 @@ import { ErrorBoundary } from "./components/error-boundary";
 import { DEFAULT_LOGIN_PATH } from "./components/const";
 import { CourseDetail, CourseList } from "./components/course";
 import { UserDetail, UserList } from "./components/user";
-import { LabDetail, LabList } from "./components/lab";
+import { CreateLab, LabDetail, LabList } from "./components/lab";
 import { GroupDetail, GroupList } from "./components/group";
 import { SessionDetail, SessionList } from "./components/session";
 import { WeekDetail, WeekList } from "./components/week";
@@ -30,6 +30,7 @@ import {
   TeacherAttendanceDetail,
 } from "./components/attendance/detail";
 import { CreateCourse } from "./components/course/create";
+import { CreateUser } from "./components/user/create";
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function PageRouter(): JSX.Element {
             <Route path="home" element={<Home />} />
             <Route path="users">
               <Route index element={<UserList />} />
+              <Route path="new" element={<CreateUser />} />
               <Route path=":userId">
                 <Route index element={<UserDetail />} />
                 <Route path="password" element={<ChangePassword />} />
@@ -76,6 +78,7 @@ function PageRouter(): JSX.Element {
             </Route>
             <Route path="labs">
               <Route index element={<LabList />} />
+              <Route path="new" element={<CreateLab />} />
               <Route path=":labId" element={<LabDetail />} />
             </Route>
             <Route path="weeks">

@@ -2,7 +2,7 @@ import { Form, Input, Space } from "antd";
 import {} from "antd/es/select";
 import { useCallback, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import api, { Course, RequestOptions } from "../../api";
+import api, { Course } from "../../api";
 import { useHasRole } from "../auth-context";
 import {
   LabSelect,
@@ -10,28 +10,16 @@ import {
   SimpleRestApiUpdateForm,
   UserSelect,
 } from "../form";
-import { GROUP_COLUMNS } from "../group/list";
+import { formatGroupItemPath, GROUP_COLUMNS } from "../group";
 import { useRootPageTitle } from "../root-page-context";
 import { SimpleRestApiTable } from "../table";
-
-const COURSE_RETRIEVE_PARAMS: RequestOptions<Course> = {
-  urlParams: {
-    fields: [
-      "id",
-      "title",
-      "code",
-      "coordinators",
-      "coordinator_ids",
-      "is_active",
-    ],
-  },
-};
+import { COURSE_RETRIEVE_PARAMS, DESTROYABLE_ROLES } from "./const";
 
 export function CourseDetail(props: {}) {
   const { courseId } = useParams();
   const [course, setCourse] = useState<Course>();
   const [canUpdateCourse, setCanUpdateCourse] = useState(false);
-  const allowDelete = useHasRole(["admin"]);
+  const allowDelete = useHasRole(DESTROYABLE_ROLES);
 
   useRootPageTitle(
     course ? ["course", course.code!] : ["course", "loading..."]
@@ -78,7 +66,7 @@ export function CourseDetail(props: {}) {
       <SimpleRestApiTable
         title="Groups"
         api={api.group}
-        formatItemPath={({ id }) => `/groups/${id}`}
+        formatItemPath={formatGroupItemPath}
         columns={GROUP_COLUMNS}
         additionalListUrlParams={listGroupUrlParam}
         allowSearch
