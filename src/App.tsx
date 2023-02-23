@@ -31,6 +31,7 @@ import {
 } from "./components/attendance/detail";
 import { CreateCourse } from "./components/course/create";
 import { CreateUser } from "./components/user/create";
+import { CreateGroup } from "./components/group/create";
 
 function App() {
   return (
@@ -66,6 +67,7 @@ function PageRouter(): JSX.Element {
             </Route>
             <Route path="groups">
               <Route index element={<GroupList />} />
+              <Route path="new" element={<CreateGroup />} />
               <Route path=":groupId" element={<GroupDetail />} />
             </Route>
             <Route

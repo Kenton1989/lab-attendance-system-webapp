@@ -211,7 +211,7 @@ export function CourseSelect(props: Partial<SimpleRestApiSelectProps<Course>>) {
   return <SimpleRestApiSelect {...finalProps} />;
 }
 function formatLabLabel(val: Lab) {
-  return val.username;
+  return `${val.username} (${val.room_count} rooms)`;
 }
 
 export function LabSelect(props: Partial<SimpleRestApiSelectProps<Lab>>) {

@@ -16,7 +16,7 @@ export function CreateLab(props: {}) {
 
   const userCreationGuide = (
     <>
-      You may need to create a user with lab role{" "}
+      You may need to create a user with lab role
       <Link to="/users/new">here</Link>, before create a lab
     </>
   );

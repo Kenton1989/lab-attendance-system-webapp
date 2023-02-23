@@ -71,6 +71,7 @@ export function CourseDetail(props: {}) {
         additionalListUrlParams={listGroupUrlParam}
         allowSearch
         allowCreate={canUpdateCourse}
+        createItemPath={`/groups/new?course=${courseId}`}
         allowUploadCsv={canUpdateCourse}
         allowDownloadCsv
         filterFormItems={

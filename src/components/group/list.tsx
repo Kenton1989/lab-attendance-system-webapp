@@ -19,6 +19,7 @@ export function GroupList(props: {}) {
       columns={GROUP_COLUMNS}
       allowSearch
       allowCreate={canCreate}
+      createItemPath="/groups/new"
       allowUploadCsv={canCreate}
       allowDownloadCsv
       filterFormItems={

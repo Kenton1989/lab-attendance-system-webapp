@@ -39,6 +39,7 @@ export function SimpleRestApiCreateForm<
     onCreationError = throwIfNot4xxError,
 
     form: parentForm,
+    disabled: parentDisabled,
   } = props;
 
   const [childForm] = Form.useForm<FormValueT>();
@@ -110,7 +111,7 @@ export function SimpleRestApiCreateForm<
   );
 
   return (
-    <Form form={form} onFinish={onFinish} disabled={creating}>
+    <Form form={form} onFinish={onFinish} disabled={creating || parentDisabled}>
       {msgCtx}
       {formItems}
       <Form.Item>
