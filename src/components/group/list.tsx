@@ -20,8 +20,8 @@ export function GroupList(props: {}) {
       allowSearch
       allowCreate={canCreate}
       createItemPath="/groups/new"
-      allowUploadCsv={canCreate}
-      allowDownloadCsv
+      // allowUploadCsv={canCreate}
+      // allowDownloadCsv
       filterFormItems={
         <>
           <Form.Item label="Course" name="course">
@@ -31,13 +31,13 @@ export function GroupList(props: {}) {
             <LabSelect />
           </Form.Item>
           <Form.Item label="Group Supervisor" name="supervisors_contain">
-            <UserSelect />
+            <UserSelect role="staff" />
           </Form.Item>
           <Form.Item label="Student" name="students_contain">
-            <UserSelect />
+            <UserSelect role="student" />
           </Form.Item>
           <Form.Item label="TA" name="teachers_contain">
-            <UserSelect />
+            <UserSelect role="teacher" />
           </Form.Item>
         </>
       }

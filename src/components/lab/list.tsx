@@ -24,12 +24,12 @@ export function LabList(props: {}) {
       allowSearch={false}
       allowCreate={canCreate}
       createItemPath={"/labs/new"}
-      allowUploadCsv={canCreate}
-      allowDownloadCsv
+      // allowUploadCsv={canCreate}
+      // allowDownloadCsv
       filterFormItems={
         <>
           <Form.Item label="Lab Executives" name="executives_contain">
-            <UserSelect />
+            <UserSelect role="staff" />
           </Form.Item>
         </>
       }

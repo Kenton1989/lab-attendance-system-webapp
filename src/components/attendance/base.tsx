@@ -13,6 +13,7 @@ import {
 import { useCallback, useState } from "react";
 import { useParams } from "react-router-dom";
 import { CHECK_IN_STATE_OPTIONS } from "../form";
+import dayjs from "dayjs";
 
 function doNothing() {}
 
@@ -98,8 +99,8 @@ export function BaseAttendanceListPage(props: BaseAttendanceListPageProps) {
   return (
     <SimpleRestApiTable
       allowCreate={canCreate}
-      allowUploadCsv={canCreate}
-      allowDownloadCsv
+      // allowUploadCsv={canCreate}
+      // allowDownloadCsv
       columns={ATTENDANCE_COLUMN}
       {...tableProps}
     />
@@ -128,8 +129,25 @@ const ATTENDANCE_RETRIEVE_PARAMS: RequestOptions<Attendance> = {
   },
 };
 
-const { dataToForm: attendanceDataToForm, formToData: attendanceFormToData } =
-  makeDateFieldsTransformer<Attendance>("check_in_datetime", "last_modify");
+const {
+  dataToForm: attendanceDataToFormBase,
+  formToData: attendanceFormToDataBase,
+} = makeDateFieldsTransformer<Attendance>("check_in_datetime", "last_modify");
+
+function attendanceDataToForm(a: Attendance): any {
+  const res = attendanceDataToFormBase(a);
+  console.log(res.check_in_state, res.check_in_datetime);
+  if (res.check_in_state === "absent" && !res.check_in_datetime) {
+    res.check_in_datetime = dayjs(Date.now());
+  }
+  return res;
+}
+
+function attendanceFormToData(val: any): Attendance {
+  val.last_modify = dayjs(Date.now() - 1000);
+  const res = attendanceFormToDataBase(val);
+  return res;
+}
 
 export function BaseAttendanceDetailPage(props: BaseAttendanceDetailPageProps) {
   const { attendanceId } = useParams();
@@ -171,6 +189,7 @@ export function BaseAttendanceDetailPage(props: BaseAttendanceDetailPageProps) {
     <Space style={{ width: "100%" }} direction="vertical">
       <SimpleRestApiUpdateForm
         form={form}
+        initialValues={{ check_in_datetime: dayjs(Date.now()) }}
         dataId={attendanceId!}
         onDataLoaded={onDataLoaded}
         additionalRetrieveOptions={ATTENDANCE_RETRIEVE_PARAMS}

@@ -62,6 +62,7 @@ export function LabDetail(props: {}) {
             <Form.Item label="Executives" name="executive_ids">
               <UserSelect
                 mode="multiple"
+                role="staff"
                 persistDataOptions={lab?.executives}
               />
             </Form.Item>

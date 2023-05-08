@@ -67,8 +67,8 @@ export function SessionList(props: {}) {
       columns={SESSION_COLUMNS}
       allowSearch
       allowCreate={canCreate}
-      allowUploadCsv={canCreate}
-      allowDownloadCsv
+      // allowUploadCsv={canCreate}
+      // allowDownloadCsv
       filterFormItems={
         <>
           <Form.Item label="Course" name="course">

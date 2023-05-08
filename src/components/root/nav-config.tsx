@@ -1,9 +1,7 @@
 import {
   BarChartOutlined,
-  CalendarOutlined,
   CarryOutOutlined,
   DatabaseOutlined,
-  ExperimentOutlined,
   HomeOutlined,
   SettingOutlined,
   UserOutlined,
@@ -58,22 +56,23 @@ function makeItem(
 const CONFIG: NavConfig = {
   tabItems: [
     makeItem("Home", "/home", <HomeOutlined />, undefined),
-    makeItem("Courses", "/courses", <DatabaseOutlined />, ["staff"]),
-    makeItem("Groups", "/groups", <DatabaseOutlined />, ["staff"]),
-    makeItem("Sessions", "/sessions", <DatabaseOutlined />, ["staff"]),
+    makeItem("Courses", "/courses", <DatabaseOutlined />, ["admin", "staff"]),
+    makeItem("Groups", "/groups", <DatabaseOutlined />, ["admin", "staff"]),
+    makeItem("Sessions", "/sessions", <DatabaseOutlined />, ["admin", "staff"]),
     makeItem("Attendances", "/student_attendances", <CarryOutOutlined />, [
+      "admin",
       "staff",
     ]),
     makeItem("Attendances (TA)", "/teacher_attendances", <CarryOutOutlined />, [
+      "admin",
       "staff",
     ]),
-    makeItem("Labs", "/labs", <ExperimentOutlined />, ["staff"]),
-    makeItem("Users", "/users", <UserOutlined />, ["staff"]),
-    makeItem("Weeks", "/weeks", <CalendarOutlined />, ["staff"]),
+    makeItem("Users", "/users", <UserOutlined />, ["admin", "staff"]),
     makeItem("Statistics", "/attendance_statistics", <BarChartOutlined />, [
+      "admin",
       "staff",
     ]),
-    makeItem("Preferences", "/preferences", <SettingOutlined />, []),
+    makeItem("Settings", "/settings", <SettingOutlined />, ["admin", "staff"]),
     makeItem(
       "My Attendances",
       "/my_student_attendances",
@@ -102,7 +101,7 @@ export function useAntMenuItems(): AntMenuItem[] {
     return CONFIG.tabItems.reduce((previous, current) => {
       if (
         current.permittedRoles === undefined ||
-        userHasRole(auth.user, ["admin", ...current.permittedRoles])
+        userHasRole(auth.user, current.permittedRoles)
       ) {
         return [...previous, current.item];
       }

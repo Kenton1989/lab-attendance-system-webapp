@@ -24,8 +24,8 @@ export function UserList(props: {}) {
       allowSearch
       allowCreate={canCreate}
       createItemPath={"/users/new"}
-      allowUploadCsv={canCreate}
-      allowDownloadCsv
+      // allowUploadCsv={canCreate}
+      // allowDownloadCsv
       filterFormItems={
         <>
           <Form.Item label="Role" name="roles_contain">

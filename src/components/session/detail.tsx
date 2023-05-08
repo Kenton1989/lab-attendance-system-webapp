@@ -32,7 +32,7 @@ const SESSION_RETRIEVE_PARAMS: RequestOptions<Session> = {
 const { dataToForm: sessionDataToForm, formToData: sessionFormToData } =
   makeDateFieldsTransformer<Session>("start_datetime", "end_datetime");
 
-const SHOW_TIME_FORMAT = { format: "HH:mm" };
+const SHOW_TIME_FORMAT = { format: "HH:mm", minuteStep: 30 };
 
 export function SessionDetail(props: {}) {
   const { sessionId } = useParams();

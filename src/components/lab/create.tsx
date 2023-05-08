@@ -40,7 +40,7 @@ export function CreateLab(props: {}) {
             <InputNumber min={1} max={100} />
           </Form.Item>
           <Form.Item label="Executives" name="executive_ids">
-            <UserSelect mode="multiple" />
+            <UserSelect mode="multiple" role="staff" />
           </Form.Item>
         </>
       }

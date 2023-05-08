@@ -24,12 +24,12 @@ export function CourseList(props: {}) {
       createItemPath="/courses/new"
       allowSearch
       allowCreate={canCreate}
-      allowUploadCsv={canCreate}
-      allowDownloadCsv
+      // allowUploadCsv={canCreate}
+      // allowDownloadCsv
       filterFormItems={
         <>
           <Form.Item label="Course Coordinator" name="coordinators_contain">
-            <UserSelect />
+            <UserSelect role="staff" />
           </Form.Item>
         </>
       }

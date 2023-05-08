@@ -32,6 +32,7 @@ import {
 import { CreateCourse } from "./components/course/create";
 import { CreateUser } from "./components/user/create";
 import { CreateGroup } from "./components/group/create";
+import { Settings } from "./components/settings";
 
 function App() {
   return (
@@ -109,7 +110,7 @@ function PageRouter(): JSX.Element {
               path="my_teacher_attendances"
               element={<MyTeacherAttendanceList />}
             />
-            <Route path="preferences" element={<DummyComponent />} />
+            <Route path="settings" element={<Settings />} />
             <Route path="attendance_statistics">
               <Route index element={<DummyComponent />} />
               <Route path="courses" element={<DummyComponent />}>

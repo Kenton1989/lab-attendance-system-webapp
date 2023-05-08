@@ -10,7 +10,7 @@ export function makeDateFieldsTransformer<T>(...fields: (keyof T)[]): {
     for (const field of fields) {
       const dateTimeObj: Dayjs | undefined = val[field];
       if (dayjs.isDayjs(dateTimeObj)) {
-        dateTimes[field] = dateTimeObj.format("YYYY-MM-DD");
+        dateTimes[field] = dateTimeObj.format();
       }
     }
 

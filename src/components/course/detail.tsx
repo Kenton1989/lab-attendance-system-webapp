@@ -56,6 +56,7 @@ export function CourseDetail(props: {}) {
             <Form.Item label="Coordinators" name="coordinator_ids">
               <UserSelect
                 mode="multiple"
+                role="staff"
                 persistDataOptions={course?.coordinators}
               />
             </Form.Item>
@@ -72,21 +73,21 @@ export function CourseDetail(props: {}) {
         allowSearch
         allowCreate={canUpdateCourse}
         createItemPath={`/groups/new?course=${courseId}`}
-        allowUploadCsv={canUpdateCourse}
-        allowDownloadCsv
+        // allowUploadCsv={canUpdateCourse}
+        // allowDownloadCsv
         filterFormItems={
           <>
             <Form.Item label="Lab" name="lab">
               <LabSelect />
             </Form.Item>
             <Form.Item label="Group Supervisor" name="supervisors_contain">
-              <UserSelect />
+              <UserSelect role="staff" />
             </Form.Item>
             <Form.Item label="Student" name="students_contain">
-              <UserSelect />
+              <UserSelect role="student" />
             </Form.Item>
             <Form.Item label="TA" name="teachers_contain">
-              <UserSelect />
+              <UserSelect role="teacher" />
             </Form.Item>
           </>
         }

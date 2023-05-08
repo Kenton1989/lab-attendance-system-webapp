@@ -37,8 +37,8 @@ export function WeekList(props: {}) {
       defaultPageSize={20}
       allowSearch
       allowCreate={canCreate}
-      allowUploadCsv={canCreate}
-      allowDownloadCsv
+      // allowUploadCsv={canCreate}
+      // allowDownloadCsv
       // allowCreate
     />
   );

@@ -73,12 +73,14 @@ export function GroupDetail(props: {}) {
             <Form.Item label="Supervisors" name="supervisor_ids">
               <UserSelect
                 mode="multiple"
+                role="staff"
                 persistDataOptions={group?.supervisors}
               />
             </Form.Item>
             <Form.Item label="TAs" name="teacher_ids">
               <UserSelect
                 mode="multiple"
+                role="teacher"
                 persistDataOptions={group?.teachers}
               />
             </Form.Item>
@@ -93,8 +95,8 @@ export function GroupDetail(props: {}) {
         columns={SESSION_COLUMNS}
         additionalListUrlParams={groupIdUrlParam}
         allowCreate={canUpdateGroup}
-        allowUploadCsv={canUpdateGroup}
-        allowDownloadCsv
+        // allowUploadCsv={canUpdateGroup}
+        // allowDownloadCsv
       />
 
       <SimpleRestApiTable
@@ -105,8 +107,8 @@ export function GroupDetail(props: {}) {
         additionalListUrlParams={groupIdUrlParam}
         allowSearch
         allowCreate={canUpdateGroup}
-        allowUploadCsv={canUpdateGroup}
-        allowDownloadCsv
+        // allowUploadCsv={canUpdateGroup}
+        // allowDownloadCsv
         defaultPageSize={50}
       />
 
@@ -117,8 +119,8 @@ export function GroupDetail(props: {}) {
         columns={MAKE_UP_SESSION_COLUMNS}
         additionalListUrlParams={groupIdUrlParam}
         allowCreate={canUpdateGroup}
-        allowUploadCsv={canUpdateGroup}
-        allowDownloadCsv
+        // allowUploadCsv={canUpdateGroup}
+        // allowDownloadCsv
       />
     </Space>
   );
