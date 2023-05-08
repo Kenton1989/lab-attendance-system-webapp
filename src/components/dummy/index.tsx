@@ -2,7 +2,7 @@ import { useRootPageTitle } from "../root-page-context";
 
 export default function DummyComponent(props: { title?: string }): JSX.Element {
   let { title = "Lorem Ipsum" } = props;
-  useRootPageTitle([title]);
+  // useRootPageTitle([title]);
 
   return (
     <>

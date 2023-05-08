@@ -1,6 +1,12 @@
 import React from "react";
 import "./App.css";
-import { Navigate, Route, BrowserRouter, Routes } from "react-router-dom";
+import {
+  Navigate,
+  Route,
+  BrowserRouter,
+  Routes,
+  Outlet,
+} from "react-router-dom";
 import RootPage from "./components/root";
 import Login from "./components/login";
 import NotFount404 from "./components/not-found";
@@ -33,6 +39,11 @@ import { CreateCourse } from "./components/course/create";
 import { CreateUser } from "./components/user/create";
 import { CreateGroup } from "./components/group/create";
 import { Settings } from "./components/settings";
+import {
+  CourseStatistics,
+  CourseStatisticsDetail,
+  StatisticsRoot,
+} from "./components/statistics";
 
 function App() {
   return (
@@ -111,14 +122,17 @@ function PageRouter(): JSX.Element {
               element={<MyTeacherAttendanceList />}
             />
             <Route path="settings" element={<Settings />} />
-            <Route path="attendance_statistics">
-              <Route index element={<DummyComponent />} />
-              <Route path="courses" element={<DummyComponent />}>
+            <Route path="attendance_statistics" element={<StatisticsRoot />}>
+              <Route
+                index
+                element={<Empty description="Please select data type." />}
+              />
+              <Route path="courses" element={<CourseStatistics />}>
                 <Route
                   index
                   element={<Empty description="Please select a course." />}
                 />
-                <Route path=":courseId" element={<DummyComponent />} />
+                <Route path=":courseId" element={<CourseStatisticsDetail />} />
               </Route>
               <Route path="groups" element={<DummyComponent />}>
                 <Route
