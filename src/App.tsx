@@ -42,7 +42,13 @@ import { Settings } from "./components/settings";
 import {
   CourseStatistics,
   CourseStatisticsDetail,
+  GroupStatistics,
+  GroupStatisticsDetail,
   StatisticsRoot,
+  StudentStatistics,
+  StudentStatisticsDetail,
+  TeacherStatistics,
+  TeacherStatisticsDetail,
 } from "./components/statistics";
 
 function App() {
@@ -134,25 +140,26 @@ function PageRouter(): JSX.Element {
                 />
                 <Route path=":courseId" element={<CourseStatisticsDetail />} />
               </Route>
-              <Route path="groups" element={<DummyComponent />}>
+              <Route path="groups" element={<GroupStatistics />}>
                 <Route
                   index
-                  element={<Empty description="Please select a course." />}
+                  element={<Empty description="Please select a group." />}
                 />
-                <Route path=":courseId">
-                  <Route
-                    index
-                    element={<Empty description="Please select a group." />}
-                  />
-                  <Route path=":groupId" element={<DummyComponent />} />
-                </Route>
+                <Route path=":groupId" element={<GroupStatisticsDetail />} />
               </Route>
-              <Route path="teachers" element={<DummyComponent />}>
+              <Route path="teachers" element={<TeacherStatistics />}>
                 <Route
                   index
                   element={<Empty description="Please select a TA." />}
                 />
-                <Route path=":userId" element={<DummyComponent />} />
+                <Route path=":userId" element={<TeacherStatisticsDetail />} />
+              </Route>
+              <Route path="students" element={<StudentStatistics />}>
+                <Route
+                  index
+                  element={<Empty description="Please select a Student." />}
+                />
+                <Route path=":userId" element={<StudentStatisticsDetail />} />
               </Route>
             </Route>
           </Route>
