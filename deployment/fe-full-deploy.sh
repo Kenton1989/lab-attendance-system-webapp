@@ -1,3 +1,8 @@
+set -e # exit when error happens on any line
+set -o pipefail # return error code of last executed command
+
+#########################
+
 # if [[ $UID != 0 ]]; then
 #     echo "Please run this script with sudo:"
 #     echo "sudo $0 $*"
@@ -29,6 +34,26 @@ if [[ "$FRONTEND_PROJ_FOLDER" == "" ]]; then
 fi
 
 ###########################
+
+echo installing node.js...
+
+sudo curl -sL https://deb.nodesource.com/setup_16.x -o /tmp/nodesource_setup.sh
+sudo bash /tmp/nodesource_setup.sh
+sudo apt-get install nodejs
+
+echo installed node.js: $(node --version)
+echo
+###########################
+
+echo
+bash ./deployment/fe-quick-deploy.sh
+echo
+
+###########################
+
+echo
+sudo bash ./deployment/nginx-deploy.sh
+echo############
 
 echo installing node.js...
 

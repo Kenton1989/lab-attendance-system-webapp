@@ -1,3 +1,16 @@
+set -e # exit when error happens on any line
+set -o pipefail # return error code of last executed command
+
+#########################
+
+if [[ $UID != 0 ]]; then
+    echo "Please run this script with sudo:"
+    echo "sudo $0 $*"
+    exit 1
+fi
+
+###########################
+
 PACKAGE_JSON=package.json
 
 if [ ! -f "$PACKAGE_JSON" ]; then
@@ -9,25 +22,30 @@ if [ ! -f "$PACKAGE_JSON" ]; then
     exit 1
 fi
 
-############################
-
-# Absolute path to this script
-SCRIPT=$(readlink -f "$0")
-# Absolute path of the dir this script is in
-SCRIPT_DIR_PATH=$(dirname "$SCRIPT")
-
-if [[ "$FRONTEND_PROJ_FOLDER" == "" ]]; then
-    export FRONTEND_PROJ_FOLDER=$(pwd)
-fi
-
 ###########################
 
-echo installing packages
-npm install
+echo installing Nginx...
 
+apt-get update
+apt-get install nginx
 
-echo building product
-npm run build
-export STATIC_FILE_PATH=$FRONTEND_PROJ_FOLDER/build
+echo Nginx installed
+echo
+echo status of Nginx
+systemctl status nginx
+
+#####################
+
+echo changing firewall setting...
+
+ufw allow 'Nginx HTTP'
+
+echo firewall settings updated
+
+#####################
+
+bash ./deployment/set-nginx.conf.sh
+
+echo Nginx deployment doneILE_PATH=$FRONTEND_PROJ_FOLDER/build
 echo production code built
 

@@ -1,3 +1,8 @@
+set -e # exit when error happens on any line
+set -o pipefail # return error code of last executed command
+
+#########################
+
 PACKAGE_JSON=package.json
 
 if [ ! -f "$PACKAGE_JSON" ]; then

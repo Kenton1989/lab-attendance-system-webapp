@@ -1,30 +1,30 @@
-if [[ $UID != 0 ]]; then
-    echo "Please run this script with sudo:"
-    echo "sudo $0 $*"
+set -e # exit when error happens on any line
+set -o pipefail # return error code of last executed command
+
+#########################
+
+PACKAGE_JSON=package.json
+
+if [ ! -f "$PACKAGE_JSON" ]; then
+    cd ..
+fi
+
+if [ ! -f "$PACKAGE_JSON" ]; then
+    echo cannot find $PACKAGE_JSON, please make sure you are running this script in the node.js project root folder
     exit 1
 fi
 
-##############################
+###########################
 
-# Absolute path to this script
-SCRIPT=$(readlink -f "$0")
-# Absolute path of the dir this script is in
-SCRIPT_DIR_PATH=$(dirname "$SCRIPT")
+if [[ $BACKEND_SERVER == "" ]]; then
+    export BACKEND_SERVER=127.0.0.1:8000
+fi
 
-NGINX_CONF_TEMPLATE=$SCRIPT_DIR_PATH/nginx.conf.template
-TEMP_CONF=/tmp/tmp.nginx.conf
-NGINX_CONF_PATH=/etc/nginx/nginx.conf
+if [[ $STATIC_FILE_PATH == "" ]]; then
+    if [[ $FRONTEND_PROJ_FOLDER == "" ]]; then
+        export FRONTEND_PROJ_FOLDER=$(pwd)
+    fi
+    export STATIC_FILE_PATH=$FRONTEND_PROJ_FOLDER/build
+fi
 
-##############################
-
-echo creating nginx.conf using template $NGINX_CONF_TEMPLATE...
-bash $SCRIPT_DIR_PATH/make-nginx.conf.sh <$NGINX_CONF_TEMPLATE >$TEMP_CONF
-
-echo copying $TEMP_CONF to $NGINX_CONF_PATH...
-cp $TEMP_CONF $NGINX_CONF_PATH
-
-
-##############################
-
-echo reload nginx...
-nginx -s reload
+envsubst '\$BACKEND_SERVER \$STATIC_FILE_PATH'

@@ -1,3 +1,8 @@
+set -e # exit when error happens on any line
+set -o pipefail # return error code of last executed command
+
+#########################
+
 if [[ $UID != 0 ]]; then
     echo "Please run this script with sudo:"
     echo "sudo $0 $*"
