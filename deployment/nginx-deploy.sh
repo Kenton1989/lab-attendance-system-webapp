@@ -25,7 +25,7 @@ apt-get update
 apt-get install nginx
 
 echo Nginx installed
-
+echo
 echo status of Nginx
 systemctl status nginx
 

@@ -1,8 +1,25 @@
-# Getting Started with Create React App
+# Lab Attendance System Web App
+
+
+## Installation (for Linux (Ubuntu) only)
+
+1. Clone and enter the repo
+``` bash
+git clone https://github.com/Kenton1989/lab-attendance-system-webapp.git
+cd lab-attendance-system-webapp
+```
+2. Run the deployment script, which will install all required software (hopefully), build the frontend production code, and setup the Nginx server. Please follow the prompt and enter the required information, mainly the confirmation of installing packages.
+``` bash
+bash ./deployment/fe-full-deploy.sh
+```
+3. After running `fe-full-deploy.sh` for once, if you update he frontend code and want to rebuild the production code, you can run the quick script.
+``` bash
+bash ./deployment/fe-quick-deploy.sh
+```
+
+## Other Available Scripts Provided by React.js
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
 
 In the project directory, you can run:
 

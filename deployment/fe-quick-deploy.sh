@@ -9,6 +9,17 @@ if [ ! -f "$PACKAGE_JSON" ]; then
     exit 1
 fi
 
+############################
+
+# Absolute path to this script
+SCRIPT=$(readlink -f "$0")
+# Absolute path of the dir this script is in
+SCRIPT_DIR_PATH=$(dirname "$SCRIPT")
+
+if [[ "$FRONTEND_PROJ_FOLDER" == "" ]]; then
+    export FRONTEND_PROJ_FOLDER=$(pwd)
+fi
+
 ###########################
 
 echo installing packages

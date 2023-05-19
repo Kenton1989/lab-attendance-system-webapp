@@ -17,6 +17,17 @@ if [ ! -f "$PACKAGE_JSON" ]; then
     exit 1
 fi
 
+############################
+
+# Absolute path to this script
+SCRIPT=$(readlink -f "$0")
+# Absolute path of the dir this script is in
+SCRIPT_DIR_PATH=$(dirname "$SCRIPT")
+
+if [[ "$FRONTEND_PROJ_FOLDER" == "" ]]; then
+    export FRONTEND_PROJ_FOLDER=$(pwd)
+fi
+
 ###########################
 
 echo installing node.js...
@@ -26,7 +37,15 @@ sudo bash /tmp/nodesource_setup.sh
 sudo apt-get install nodejs
 
 echo installed node.js: $(node --version)
+echo
+###########################
+
+echo
+bash ./deployment/fe-quick-deploy.sh
+echo
 
 ###########################
 
-bash ./deployment/fe-quick-deploy.sh
+echo
+bash ./deployment/nginx-deploy.sh
+echo
