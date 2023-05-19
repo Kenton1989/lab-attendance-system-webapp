@@ -29,7 +29,5 @@ npm install
 echo building product
 npm run build
 export STATIC_FILE_PATH=$FRONTEND_PROJ_FOLDER/build
+echo production code built
 
-###########################
-
-echo completed deployment script of frontend

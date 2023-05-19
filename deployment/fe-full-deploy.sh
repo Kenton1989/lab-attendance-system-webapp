@@ -47,5 +47,5 @@ echo
 ###########################
 
 echo
-bash ./deployment/nginx-deploy.sh
+sudo bash ./deployment/nginx-deploy.sh
 echo

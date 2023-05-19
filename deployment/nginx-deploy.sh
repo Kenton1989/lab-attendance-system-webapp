@@ -40,3 +40,5 @@ echo firewall settings updated
 #####################
 
 bash ./deployment/set-nginx.conf.sh
+
+echo Nginx deployment done
